@@ -11,7 +11,7 @@ npm run build
 npm run dev
 ```
 
-`npm run check` builds `dist` before running TypeScript, ESLint, and Vitest (the Workers test pool requires the assets directory). `wrangler dev` serves the built frontend assets from `dist`. The four pages are `/`, `/create`, `/host`, and `/player`; Workers Assets redirects `.html` URLs to the clean path and preserves query parameters. To verify a real local process restart (uses port 8799 and a persistent test directory), run `JEOPARDY_PERSIST_TEST_DIR=/tmp/jeopardy-room-restart-$USER npm run test:restart`; use a fresh directory for each run. Deploy with `npm run deploy`. Route `jeopardy.sighton.ca` in Cloudflare separately; no production DNS or deployment is included.
+`npm run check` builds `dist` before running TypeScript, ESLint, and Vitest (the Workers test pool requires the assets directory). `wrangler dev` serves the built frontend assets from `dist`. The four pages are `/`, `/create`, `/host`, and `/player`; Workers Assets redirects `.html` URLs to the clean path and preserves query parameters. To verify a real local process restart (uses port 8799 and a persistent test directory), run `JEOPARDY_PERSIST_TEST_DIR=/tmp/jeopardy-room-restart-$USER npm run test:restart`; use a fresh directory for each run. Also run `JEOPARDY_RESTART_MODE=expired-answer JEOPARDY_PERSIST_TEST_DIR=/tmp/jeopardy-room-expired-$USER npm run test:restart` to check restart after the first answer deadline. Deploy with `npm run deploy`. Route `jeopardy.sighton.ca` in Cloudflare separately; no production DNS or deployment is included.
 
 ## Protocol (JSON WebSocket)
 

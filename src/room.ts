@@ -60,8 +60,9 @@ export class Room extends DurableObject<Env> {
   async alarm() {
     await this.ready();
     if (this.createdAt !== null && Date.now() >= this.createdAt + ROOM_TTL_MS) { await this.expire(); return; }
-    if (timeout(this.game, Date.now())) this.broadcast();
+    const advanced = timeout(this.game, Date.now());
     await this.save();
+    if (advanced) this.broadcast();
   }
   async fetch(request: Request): Promise<Response> {
     await this.ready();

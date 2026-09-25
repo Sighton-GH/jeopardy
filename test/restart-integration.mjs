@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { WebSocket } from 'ws';
 import process from 'node:process';
 const url = 'http://127.0.0.1:8799';
+const mode = process.env.JEOPARDY_RESTART_MODE || 'active';
 let child;
 async function start() {
  child = spawn('./node_modules/.bin/wrangler', ['dev', '--local', '--ip', '127.0.0.1', '--port', '8799', '--persist-to', process.env.JEOPARDY_PERSIST_TEST_DIR || '/tmp/jeopardy-persist-restart'], { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -29,6 +30,8 @@ try {
  for (const msg of [{type:'load_board',board},{type:'adjust_score',teamId:a.welcome.teamId,delta:-500},{type:'pick_cell',cellId:'q'},{type:'arm_buzzers'}]) {host.ws.send(JSON.stringify(msg));await delay(100);}
  a.ws.send(JSON.stringify({type:'buzz'}));await delay(100);b.ws.send(JSON.stringify({type:'buzz'}));await delay(250);
  assert.equal(host.events.at(-1).state.phase,'buzzed'); assert.deepEqual(host.events.at(-1).state.buzzQueue,[a.welcome.teamId,b.welcome.teamId]);
+ const beforeDeadline=host.events.at(-1).state.buzzerDeadline; assert.ok(beforeDeadline>Date.now());
+ if (mode === 'expired-answer') await delay(Math.max(0, beforeDeadline-Date.now()+200));
  await stop();
  await start();
  const rh=await connect(code,new URLSearchParams({role:'host',token}));
@@ -37,10 +40,12 @@ try {
  assert.equal(rh.welcome.state.teams.find(t=>t.id===a.welcome.teamId).score,-500);
  assert.equal(rh.welcome.state.board[0].cells[0].answer,'Answer');
  assert.equal(ra.welcome.teamId,a.welcome.teamId);assert.equal(rb.welcome.teamId,b.welcome.teamId);
- const state=rh.events.at(-1).state;assert.equal(state.phase,'buzzed');assert.deepEqual(state.buzzQueue,[a.welcome.teamId,b.welcome.teamId]);
- rh.ws.send(JSON.stringify({type:'wrong',teamId:a.welcome.teamId}));await delay(200);
+ const state=rh.events.at(-1).state;
+ if (mode === 'active') { assert.equal(state.phase,'buzzed');assert.deepEqual(state.buzzQueue,[a.welcome.teamId,b.welcome.teamId]);assert.equal(state.buzzerDeadline,beforeDeadline);
+ rh.ws.send(JSON.stringify({type:'wrong',teamId:a.welcome.teamId}));await delay(200); }
+ else { assert.equal(state.phase,'buzzed');assert.deepEqual(state.buzzQueue,[b.welcome.teamId]);assert.ok(state.buzzerDeadline>beforeDeadline); }
  rh.ws.send(JSON.stringify({type:'correct',teamId:b.welcome.teamId}));await delay(200);
  assert.equal(rh.events.at(-1).state.teams.find(t=>t.id===b.welcome.teamId).score,200);
- console.log('PASS: real Wrangler process killed during buzzed phase, restarted against persisted DO storage; credentials, board, scores survived; live queue and deadline survived; reconnections and next answer completed.');
+ console.log(mode === 'active' ? 'PASS: active answer deadline, queue, credentials, board and scores survived process restart.' : 'PASS: expired first answer was advanced on restart; second team rejoined and completed scoring.');
  ra.ws.close();rb.ws.close();rh.ws.close();
 } finally { await stop(); }

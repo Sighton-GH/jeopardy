@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { env, runInDurableObject, runDurableObjectAlarm } from 'cloudflare:test';
 import type { Room } from '../src/room';
 
@@ -48,6 +48,61 @@ describe('durable room state', () => {
     expect(alarm).toBe(snapshot?.game.buzzerDeadline);
     expect(snapshot?.createdAt).toBeGreaterThan(0);
     host.ws.close(); a.ws.close(); b.ws.close();
+  });
+  it('does not broadcast an alarm-advanced queue until the storage write completes', async () => {
+    const { room, host, a, b } = await setup();
+    await send(host, { type: 'pick_cell', cellId: 'q' }); await send(host, { type: 'arm_buzzers' });
+    await send(a, { type: 'buzz' }); await send(b, { type: 'buzz' });
+    const deadline = current(host).buzzerDeadline!;
+    let release!: () => void;
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    await runInDurableObject(room, async (instance, state) => {
+      const original = state.storage.put.bind(state.storage);
+      vi.spyOn(state.storage, 'put').mockImplementation(async (...args: Parameters<typeof original>) => {
+        await gate;
+        return original(...args);
+      });
+      const now = vi.spyOn(Date, 'now').mockReturnValue(deadline + 1);
+      try {
+        const beforeCount = host.received.length;
+        const alarm = instance.alarm();
+        await wait();
+        expect(host.received.length).toBe(beforeCount);
+        release();
+        await alarm;
+        await wait();
+        expect(current(host).buzzQueue).toEqual([b.welcome.teamId]);
+      } finally { release(); now.mockRestore(); vi.restoreAllMocks(); }
+    });
+    host.ws.close(); a.ws.close(); b.ws.close();
+  });
+  it('keeps expired rooms closed with persisted expiry and invalidated credentials', async () => {
+    const { room, hostToken, host, a, b } = await setup();
+    const created = await runInDurableObject(room, async (_instance, state) => (await state.storage.get<{ createdAt: number }>('room'))!.createdAt);
+    const now = vi.spyOn(Date, 'now').mockReturnValue(created + 6 * 60 * 60 * 1000 + 1);
+    try {
+      const expired = await room.fetch(new Request(`https://room/ws?role=host&token=${hostToken}`, { headers: { Upgrade: 'websocket' } }));
+      expect(expired.status).toBe(410);
+      const snapshot = await runInDurableObject(room, async (_instance, state) => state.storage.get<{ expired: boolean; hostToken: string | null; tokens: Array<[string, string]> }>('room'));
+      expect(snapshot).toMatchObject({ expired: true, hostToken: null, tokens: [] });
+      expect((await room.fetch(new Request('https://room/init', { method: 'POST', body: JSON.stringify({ hostToken: 'fresh'.repeat(10) }) }))).status).toBe(409);
+      expect(await runInDurableObject(room, async (_instance, state) => state.storage.getAlarm())).toBeNull();
+    } finally { now.mockRestore(); host.ws.close(); a.ws.close(); b.ws.close(); }
+  });
+  it('persists pending re-admission and rotated credentials', async () => {
+    const { room, host, a, b } = await setup();
+    a.ws.close(); await wait();
+    await send(host, { type: 'readmit_team', teamId: a.welcome.teamId });
+    const pending = await runInDurableObject(room, async (_instance, state) => state.storage.get<{ pendingReadmission: string[]; tokens: Array<[string, string]> }>('room'));
+    expect(pending?.pendingReadmission).toContain(a.welcome.teamId);
+    expect(pending?.tokens.some(([id]) => id === a.welcome.teamId)).toBe(false);
+    const fresh = await socket(room, 'role=team&name=Alpha');
+    expect(fresh.welcome.teamId).toBe(a.welcome.teamId);
+    expect(fresh.welcome.reconnectToken).not.toBe(a.welcome.reconnectToken);
+    const rotated = await runInDurableObject(room, async (_instance, state) => state.storage.get<{ pendingReadmission: string[]; tokens: Array<[string, string]> }>('room'));
+    expect(rotated?.pendingReadmission).not.toContain(a.welcome.teamId);
+    expect(rotated?.tokens).toContainEqual([a.welcome.teamId, fresh.welcome.reconnectToken]);
+    host.ws.close(); fresh.ws.close(); b.ws.close();
   });
   it('persists an adjudication before ack, and an alarm advances expired queue', async () => {
     const { room, host, a, b } = await setup();
