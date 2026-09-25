@@ -54,8 +54,31 @@ describe('room Durable Object', () => {
     const freshEvents = messages(fresh); await sleep();
     expect((freshEvents.find(e => e.type === 'welcome') as { teamId: string }).teamId).toBe(welcome.teamId);
     const stale = await room.fetch(new Request(`https://room/ws?role=team&name=Blue&reconnect=${welcome.reconnectToken}`, { headers: { Upgrade: 'websocket' } }));
-    expect(stale.status).toBe(400);
+    expect(stale.status).toBe(101);
+    const staleSocket = stale.webSocket!; staleSocket.accept();
+    const rejected = messages(staleSocket); await sleep();
+    expect(rejected.some(e => e.type === 'error' && e.code === 'auth')).toBe(true);
     host.close(); fresh.close();
+  });
+  it('sends join rejection reasons through upgraded sockets', async () => {
+    const room = env.ROOM.get(env.ROOM.idFromName(crypto.randomUUID()));
+    const token = 'd'.repeat(40);
+    await room.fetch(new Request('https://room/init', { method: 'POST', body: JSON.stringify({ hostToken: token }) }));
+    const host = await connect(room, `role=host&token=${token}`);
+    const one = await connect(room, 'role=team&name=Blue');
+    async function rejected(query: string, code: string, detail: string) {
+      const res = await room.fetch(new Request(`https://room/ws?${query}`, { headers: { Upgrade: 'websocket' } }));
+      expect(res.status).toBe(101);
+      const ws = res.webSocket!; ws.accept(); const events = messages(ws); await sleep();
+      expect(events.some(e => e.type === 'error' && e.code === code && String(e.message).includes(detail))).toBe(true);
+    }
+    await rejected('role=team&name=blue', 'name', 'taken');
+    for (let i = 2; i <= 10; i++) await connect(room, `role=team&name=Team${i}`);
+    await rejected('role=team&name=Extra', 'full', 'full');
+    host.send(JSON.stringify({ type: 'load_board', board: { categories: [{ id: 'c', name: 'Cat', cells: [{ id: 'q', question: 'Q', answer: 'A', value: 200, dailyDouble: false }] }] } }));
+    host.send(JSON.stringify({ type: 'pick_cell', cellId: 'q' })); await sleep();
+    await rejected('role=team&name=Late', 'phase', 'during a question');
+    host.close(); one.close();
   });
   it('authenticates host, limits team commands, broadcasts redacted state', async () => {
     const room = env.ROOM.get(env.ROOM.idFromName(crypto.randomUUID()));

@@ -52,3 +52,5 @@ button:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
 .player{background:radial-gradient(circle at 92% 4%,#72a5d7 0 22%,transparent 22.2%),linear-gradient(160deg,#3673b8,#194b8b)}
 .player-head{background:#103965a8}.player-head .brand-mark{background:#ffffff}.player-head .pill{color:#20548e;box-shadow:0 4px 0 #0d3768}.identity{color:#19365f;box-shadow:0 5px 0 #0e3769}.team{color:#516d8c}.team strong{color:#19365f}.player-score{color:#205eaa}.player-state{color:#19365f;box-shadow:0 5px 0 #0e3769}.player-state p{color:#506681}.player[data-state=ready] .player-state{background:#dcecff}
 .buzz{background:#2f62a5;box-shadow:0 12px 0 #183e6b,0 20px 28px #092d60a6}.buzz:active:not(:disabled){box-shadow:0 5px 0 #183e6b,0 12px 19px #092d60a6}.buzz:disabled{background:#97a7b9;border-color:#e5edf5;box-shadow:0 8px 0 #526c87}.player[data-state=locked] .buzz:disabled{background:#168c70;border-color:#d7ffed;box-shadow:0 8px 0 #0d7251}.player[data-state=locked][data-lock-reason=out] .buzz:disabled{background:#97a7b9;border-color:#e5edf5;box-shadow:0 8px 0 #526c87}
+
+.player .connection-note{color:#1c4c84;border:2px solid #b9d2ea}

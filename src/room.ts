@@ -20,7 +20,7 @@ export class Room extends DurableObject<Env> {
     const url = new URL(request.url);
     if (url.pathname !== '/init' && this.createdAt !== null && Date.now() - this.createdAt >= ROOM_TTL_MS) {
       this.expire();
-      return json({ error: 'Room expired. Create a new game.', code: 'expired' }, 410);
+      return url.pathname === '/ws' && url.searchParams.get('role') === 'team' && request.headers.get('Upgrade')?.toLowerCase() === 'websocket' ? this.teamJoinError('expired', 'Room expired. Create a new game.') : json({ error: 'Room expired. Create a new game.', code: 'expired' }, 410);
     }
     if (url.pathname === '/init' && request.method === 'POST') {
       if (this.hostToken) return json({ error: 'Room exists' }, 409);
@@ -31,7 +31,7 @@ export class Room extends DurableObject<Env> {
       return json({ ok: true });
     }
     if (url.pathname !== '/ws' || request.headers.get('Upgrade')?.toLowerCase() !== 'websocket') return json({ error: 'Not found' }, 404);
-    if (!this.hostToken) return json({ error: 'Room not found' }, 404);
+    if (!this.hostToken) return url.searchParams.get('role') === 'team' ? this.teamJoinError('room', 'Room not found. Check the code.') : json({ error: 'Room not found' }, 404);
     const role = url.searchParams.get('role');
     let session: Session;
     let welcomeToken: string | undefined;
@@ -70,7 +70,7 @@ export class Room extends DurableObject<Env> {
       } else throw new GameError('role', 'Invalid role');
     } catch (error) {
       const e = error instanceof GameError ? error : new GameError('message', 'Invalid request');
-      return json({ error: e.message, code: e.code }, 400);
+      return role === 'team' ? this.teamJoinError(e.code, e.message) : json({ error: e.message, code: e.code }, 400);
     }
     const pair = new WebSocketPair(); const [client, server] = Object.values(pair) as [WebSocket, WebSocket];
     server.accept(); this.sessions.set(server, session);
@@ -79,6 +79,15 @@ export class Room extends DurableObject<Env> {
     server.addEventListener('close', () => this.disconnect(server));
     server.addEventListener('error', () => this.disconnect(server));
     this.broadcast();
+    return new Response(null, { status: 101, webSocket: client });
+  }
+  private teamJoinError(code: string, message: string): Response {
+    // Browsers cannot read HTTP error bodies from failed WebSocket handshakes.
+    // Upgrade first so the phone receives the exact rejection over the socket.
+    const pair = new WebSocketPair(); const [client, server] = Object.values(pair) as [WebSocket, WebSocket];
+    server.accept();
+    server.send(JSON.stringify({ type: 'error', code, message }));
+    server.close(1008, 'Join rejected');
     return new Response(null, { status: 101, webSocket: client });
   }
   private expire() {

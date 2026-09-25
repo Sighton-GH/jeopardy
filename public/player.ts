@@ -113,7 +113,7 @@ function connect() {
         terminalError = data.message;
         stopped = true;
         clearTimeout(retryTimer);
-        showWaiting('Could not join', data.message);
+        showWaiting('Could not join', data.message, '');
         message('Go back to join with a new name or code.');
         ws.close();
         return;
@@ -143,7 +143,7 @@ function connect() {
     if (socket !== ws || stopped) return;
     if (!everWelcomed || terminalError) {
       stopped = true;
-      showWaiting('Could not join', terminalError || 'Room unavailable. Check the code.');
+      showWaiting('Could not join', terminalError || 'Room unavailable. Check the code.', '');
       message('Go back to join with a new name or code.');
       return;
     }

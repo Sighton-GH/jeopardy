@@ -106,6 +106,7 @@ function renderBoard() {
   board.replaceChildren();
   if (state?.phase === 'complete') {
     board.classList.add('placeholder', 'complete-board');
+    document.body.classList.add('game-complete');
     const wrap = document.createElement('div');
     wrap.className = 'final-standings';
     const heading = document.createElement('h1'); heading.textContent = 'Game over'; wrap.append(heading);
@@ -120,6 +121,7 @@ function renderBoard() {
     return;
   }
   board.classList.remove('complete-board');
+  document.body.classList.remove('game-complete');
   if (!state || state.board.length === 0) {
     board.classList.add('placeholder');
     const hold = document.createElement('div');
