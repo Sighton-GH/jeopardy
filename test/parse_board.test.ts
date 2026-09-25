@@ -1,6 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { BoardParseError, parseBoardFile, parseCsv, parseXlsx, rowsToBoard } from '../src/parse_board';
 
+it('gives a trim path for multi-round and oversized-category uploads', () => {
+  const rows = [['round', 'cat', 'value', 'q', 'a']];
+  for (let c = 1; c <= 11; c++) rows.push([String(c <= 4 ? 1 : 2), `Cat ${c}`, '200', `Q ${c}`, `A ${c}`]);
+  try { rowsToBoard(rows); throw new Error('Expected validation error'); }
+  catch (error) {
+    expect(error).toBeInstanceOf(BoardParseError);
+    const issues = (error as BoardParseError).issues.join(' ');
+    expect(issues).toContain('2 rounds');
+    expect(issues).toContain('11 categories');
+    expect(issues).toContain('Keep only one round');
+  }
+});
+
 /* Minimal ZIP writer so tests can build real .xlsx files without fixtures. */
 function crc32(bytes: Uint8Array): number {
   let crc = 0xffffffff;

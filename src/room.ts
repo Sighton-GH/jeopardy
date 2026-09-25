@@ -2,21 +2,32 @@ import { DurableObject } from 'cloudflare:workers';
 import { addTeam, buzz, GameError, hostCommand, initialState, timeout, view, type GameState } from './state';
 import type { ClientMessage, ServerMessage } from './protocol';
 import type { Env } from './worker';
+const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
 
 type Session = { role: 'host'; token: string } | { role: 'team'; teamId: string };
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 export class Room extends DurableObject<Env> {
   private game: GameState = initialState();
   private hostToken: string | null = null;
+  private createdAt: number | null = null;
+  private expiryTimer: ReturnType<typeof setTimeout> | null = null;
+  private scheduledDeadline: number | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
   private tokens = new Map<string, string>();
   private sessions = new Map<WebSocket, Session>();
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname !== '/init' && this.createdAt !== null && Date.now() - this.createdAt >= ROOM_TTL_MS) {
+      this.expire();
+      return json({ error: 'Room expired. Create a new game.', code: 'expired' }, 410);
+    }
     if (url.pathname === '/init' && request.method === 'POST') {
       if (this.hostToken) return json({ error: 'Room exists' }, 409);
       const body = await request.json() as { hostToken?: unknown };
       if (typeof body.hostToken !== 'string' || body.hostToken.length < 32) return json({ error: 'Invalid host token' }, 400);
-      this.hostToken = body.hostToken; return json({ ok: true });
+      this.hostToken = body.hostToken; this.createdAt = Date.now();
+      this.expiryTimer = setTimeout(() => this.expire(), ROOM_TTL_MS);
+      return json({ ok: true });
     }
     if (url.pathname !== '/ws' || request.headers.get('Upgrade')?.toLowerCase() !== 'websocket') return json({ error: 'Not found' }, 404);
     if (!this.hostToken) return json({ error: 'Room not found' }, 404);
@@ -26,7 +37,11 @@ export class Room extends DurableObject<Env> {
     try {
       if (role === 'host') {
         if (url.searchParams.get('token') !== this.hostToken) throw new GameError('auth', 'Invalid host link');
-        if ([...this.sessions.values()].some(s => s.role === 'host')) throw new GameError('host', 'Host already connected');
+        // Same bearer token owns the room: replace a stale socket on refresh.
+        for (const [ws, existing] of this.sessions) if (existing.role === 'host') {
+          this.sessions.delete(ws);
+          try { ws.close(1000, 'Host reconnected'); } catch { /* already gone */ }
+        }
         session = { role: 'host', token: this.hostToken }; this.game.hostConnected = true;
       } else if (role === 'team') {
         const name = url.searchParams.get('name') ?? '';
@@ -35,7 +50,7 @@ export class Room extends DurableObject<Env> {
         if (reconnect && !match) throw new GameError('auth', 'Invalid reconnect');
         if (match) {
           const team = this.game.teams.find(t => t.id === match[0]);
-          if (!team || team.name !== name || team.connected) throw new GameError('auth', 'Invalid reconnect');
+          if (!team || team.name.toLocaleLowerCase() !== name.toLocaleLowerCase() || team.connected) throw new GameError('auth', 'Invalid reconnect');
           team.connected = true; session = { role: 'team', teamId: team.id }; welcomeToken = reconnect!; this.game.version++;
         } else {
           const teamId = crypto.randomUUID();
@@ -56,6 +71,17 @@ export class Room extends DurableObject<Env> {
     this.broadcast();
     return new Response(null, { status: 101, webSocket: client });
   }
+  private expire() {
+    if (this.expiryTimer) clearTimeout(this.expiryTimer);
+    this.expiryTimer = null;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    for (const ws of this.sessions.keys()) {
+      this.send(ws, { type: 'error', code: 'expired', message: 'Room expired. Create a new game.' });
+      try { ws.close(1000, 'Room expired'); } catch { /* already gone */ }
+    }
+    this.sessions.clear();
+  }
   private send(ws: WebSocket, message: ServerMessage) { try { ws.send(JSON.stringify(message)); } catch { this.disconnect(ws); } }
   private broadcast() { for (const [ws, session] of this.sessions) this.send(ws, { type: 'state', state: view(this.game, session.role === 'host') }); }
   private disconnect(ws: WebSocket) {
@@ -72,13 +98,16 @@ export class Room extends DurableObject<Env> {
   }
   private handleMessage(ws: WebSocket, data: string | ArrayBuffer) {
     const session = this.sessions.get(ws); if (!session) return;
+    if (this.createdAt !== null && Date.now() - this.createdAt >= ROOM_TTL_MS) { this.expire(); return; }
     try {
-      if (typeof data !== 'string' || data.length > 100000) throw new GameError('message', 'Invalid message');
+      if (typeof data !== 'string') throw new GameError('message', 'Invalid message');
+      if (data.length > 100000) throw new GameError('size', 'Board or message is too large (100 KB maximum).');
       const msg = JSON.parse(data) as ClientMessage;
       if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') throw new GameError('message', 'Invalid message');
       if (msg.type === 'ping') { this.send(ws, { type: 'pong' }); return; }
       if (session.role === 'host') {
         if (msg.type === 'buzz') throw new GameError('role', 'Host cannot buzz');
+        if (msg.type === 'load_board' && data.length > 85000) throw new GameError('size', 'Board is too large (85 KB maximum). Shorten clues or answers.');
         hostCommand(this.game, msg, Date.now());
       } else {
         if (msg.type !== 'buzz') throw new GameError('role', 'Only host may control the game');
@@ -92,6 +121,12 @@ export class Room extends DurableObject<Env> {
   }
   private schedule() {
     const deadline = this.game.buzzerDeadline;
-    if (deadline) setTimeout(() => { if (timeout(this.game, Date.now())) { this.broadcast(); this.schedule(); } }, Math.max(0, deadline - Date.now()));
+    if (deadline === this.scheduledDeadline) return;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null; this.scheduledDeadline = deadline;
+    if (deadline) this.timer = setTimeout(() => {
+      this.timer = null; this.scheduledDeadline = null;
+      if (this.game.buzzerDeadline === deadline && timeout(this.game, Date.now())) { this.broadcast(); this.schedule(); }
+    }, Math.max(0, deadline - Date.now()));
   }
 }

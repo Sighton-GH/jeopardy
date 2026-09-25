@@ -14,17 +14,17 @@ export function view(s: GameState, host: boolean): View {
   return { ...s, board: s.board.map(c => ({ id: c.id, name: c.name, cells: c.cells.map(cell => {
     const { question, answer, ...rest } = cell;
     const visible = s.selectedCellId === cell.id;
-    return host ? { ...rest, question, answer } : { ...rest, ...(visible ? { question } : {}) };
+    return host ? { ...rest, question, answer } : { ...rest, dailyDouble: visible ? cell.dailyDouble : false, ...(visible ? { question } : {}) };
   }) })) };
 }
 export function validateBoard(input: BoardInput): Category[] {
   if (!input || !Array.isArray(input.categories) || input.categories.length < 1 || input.categories.length > 10) fail('board', 'Board needs 1-10 categories');
   const ids = new Set<string>();
   return input.categories.map(category => {
-    if (!category || typeof category.id !== 'string' || !category.id.trim() || typeof category.name !== 'string' || !category.name.trim() || !Array.isArray(category.cells) || category.cells.length < 1 || category.cells.length > 10) fail('board', 'Invalid category');
+    if (!category || typeof category.id !== 'string' || !category.id.trim() || category.id.length > 80 || typeof category.name !== 'string' || !category.name.trim() || category.name.length > 100 || !Array.isArray(category.cells) || category.cells.length < 1 || category.cells.length > 10) fail('board', 'Invalid category');
     if (ids.has(category.id)) fail('board', 'Duplicate ID'); ids.add(category.id);
     return { id: category.id, name: category.name.trim(), cells: category.cells.map(cell => {
-      if (!cell || typeof cell.id !== 'string' || !cell.id.trim() || ids.has(cell.id) || typeof cell.question !== 'string' || !cell.question.trim() || typeof cell.answer !== 'string' || !cell.answer.trim() || !Number.isSafeInteger(cell.value) || cell.value <= 0 || cell.value > 100000 || typeof cell.dailyDouble !== 'boolean') fail('board', 'Invalid cell');
+      if (!cell || typeof cell.id !== 'string' || !cell.id.trim() || cell.id.length > 80 || ids.has(cell.id) || typeof cell.question !== 'string' || !cell.question.trim() || cell.question.length > 1500 || typeof cell.answer !== 'string' || !cell.answer.trim() || cell.answer.length > 1000 || !Number.isSafeInteger(cell.value) || cell.value <= 0 || cell.value > 100000 || typeof cell.dailyDouble !== 'boolean') fail('board', 'Invalid cell');
       ids.add(cell.id); return { ...cell, revealed: false };
     }) };
   });
@@ -72,19 +72,21 @@ export function hostCommand(s: GameState, command: HostCommand, now: number): vo
       s.phase = 'buzz-open'; s.buzzerDeadline = null; break;
     case 'correct': {
       if (s.phase !== 'buzzed') fail('phase', 'No active answer');
-      const cell = selected(s), team = s.teams.find(t => t.id === s.buzzQueue[0]);
+      if (command.teamId !== s.buzzQueue[0]) fail('stale', 'Answerer changed. Check the current team.');
+      const cell = selected(s), team = s.teams.find(t => t.id === command.teamId);
       if (!cell || !team) throw new GameError('state', 'Missing cell or team');
       team.score += cell.value; cell.revealed = true; s.phase = 'resolving'; s.buzzerDeadline = null; s.buzzQueue = []; break;
     }
     case 'wrong': {
       if (s.phase !== 'buzzed') fail('phase', 'No active answer');
-      const cell = selected(s), team = s.teams.find(t => t.id === s.buzzQueue[0]);
+      if (command.teamId !== s.buzzQueue[0]) fail('stale', 'Answerer changed. Check the current team.');
+      const cell = selected(s), team = s.teams.find(t => t.id === command.teamId);
       if (!cell || !team) throw new GameError('state', 'Missing cell or team');
       team.score -= cell.value; s.lockedOut.push(team.id); advance(s, now); break;
     }
     case 'back_to_board':
       if (s.phase === 'lobby') fail('phase', 'No board loaded');
-      if (s.selectedCellId) { const cell = selected(s); if (cell) cell.revealed = true; }
+      if (s.selectedCellId && s.phase !== 'question-showing') { const cell = selected(s); if (cell) cell.revealed = true; }
       s.phase = 'board'; s.selectedCellId = null; s.buzzQueue = []; s.lockedOut = []; s.buzzerDeadline = null; break;
     case 'adjust_score': {
       if (!Number.isSafeInteger(command.delta) || Math.abs(command.delta) > 100000) fail('score', 'Invalid adjustment');

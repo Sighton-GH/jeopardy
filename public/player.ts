@@ -18,6 +18,8 @@ let pendingBuzz = false;
 let retryCount = 0;
 let retryTimer: ReturnType<typeof setTimeout> | undefined;
 let stopped = false;
+let terminalError = '';
+let everWelcomed = false;
 
 node('room-code').textContent = code ? code.replace(/(.{4})/, '$1 ') : 'ROOM';
 node('team-name').textContent = name || 'Your team';
@@ -89,6 +91,7 @@ function render(state: View) {
 function connect() {
   if (stopped) return;
   pendingBuzz = false;
+  terminalError = '';
   showWaiting(retryCount ? 'Reconnecting' : 'Connecting to the game', 'Please wait.');
   const params = new URLSearchParams({ role: 'team', name });
   const token = sessionStorage.getItem(tokenKey);
@@ -96,16 +99,27 @@ function connect() {
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
   const ws = new WebSocket(`${protocol}//${location.host}/api/rooms/${code}/ws?${params}`);
   socket = ws;
+  ws.onopen = () => { everWelcomed = false; };
   ws.onmessage = event => {
     let data: ServerMessage;
     try { data = JSON.parse(event.data as string) as ServerMessage; } catch { return; }
     if (data.type === 'error') {
       pendingBuzz = false;
+      if (!everWelcomed || ['auth', 'full', 'name', 'phase', 'expired'].includes(data.code)) {
+        terminalError = data.message;
+        stopped = true;
+        clearTimeout(retryTimer);
+        showWaiting('Could not join', data.message);
+        message('Go back to join with a new name or code.');
+        ws.close();
+        return;
+      }
       message(data.message);
       if (latest) render(latest);
       return;
     }
     if (data.type === 'welcome') {
+      everWelcomed = true;
       if (data.role !== 'team' || !data.teamId || !data.reconnectToken) {
         message('Could not join this team. Return to the join page and try again.');
         stopped = true; ws.close(); return;
@@ -123,6 +137,12 @@ function connect() {
   };
   ws.onclose = () => {
     if (socket !== ws || stopped) return;
+    if (!everWelcomed || terminalError) {
+      stopped = true;
+      showWaiting('Could not join', terminalError || 'Room unavailable. Check the code.');
+      message('Go back to join with a new name or code.');
+      return;
+    }
     pendingBuzz = false;
     showWaiting('Connection lost', 'Trying to reconnect to your team.', 'Buzzing is paused.');
     message('Connection lost. Reconnecting…');
@@ -139,6 +159,13 @@ button.addEventListener('click', () => {
   socket.send(JSON.stringify({ type: 'buzz' }));
 });
 window.addEventListener('pagehide', () => { stopped = true; clearTimeout(retryTimer); socket?.close(); });
+window.addEventListener('pageshow', event => {
+  if (event.persisted && !terminalError && /^[A-Z2-9]{8}$/.test(code) && name) {
+    stopped = false;
+    retryCount = 0;
+    connect();
+  }
+});
 setInterval(() => { if (latest?.phase === 'buzzed' && latest.buzzQueue[0] === teamId) render(latest); }, 250);
 if (!/^[A-Z2-9]{8}$/.test(code) || !name || name.length > 30) {
   stopped = true;

@@ -98,7 +98,7 @@ interface RowRef { sheetRow: number; round: string; category: string; question: 
 /** Normalize parsed spreadsheet rows (header row + data rows) into a validated BoardInput. */
 export function rowsToBoard(rows: string[][]): BoardInput {
   if (rows.length === 0) fail(['The spreadsheet is empty.']);
-  if (rows.length - 1 > MAX_ROWS) fail([`The spreadsheet has ${rows.length - 1} rows; a board needs at most ${MAX_CATEGORIES * MAX_CELLS_PER_CATEGORY} clues.`]);
+  if (rows.length - 1 > MAX_ROWS) fail([`The file has ${rows.length - 1} clue rows. This uploader accepts at most ${MAX_ROWS} rows; a single game board supports up to ${MAX_CATEGORIES} categories with ${MAX_CELLS_PER_CATEGORY} clues each. Save one round in a separate CSV or sheet and upload that.`]);
 
   const header = rows[0]!.map(cell => cell.trim().toLowerCase().replace(/[_-]+/g, ' '));
   const columns = new Map<string, number>(); // logical name -> column index
@@ -157,7 +157,7 @@ export function rowsToBoard(rows: string[][]): BoardInput {
 
   const rounds = [...new Set(refs.map(ref => ref.round).filter(r => r !== ''))];
   if (rounds.length > 1) {
-    issues.push(`The file has ${rounds.length} rounds (${rounds.join(', ')}). Upload one round per file - create a separate room for each round.`);
+    issues.push(`The file has ${rounds.length} rounds (${rounds.join(', ')}). Keep only one round in this CSV or first sheet, then upload it. Create a separate room for each round.`);
   }
 
   // Group by category in first-seen order.
@@ -168,11 +168,11 @@ export function rowsToBoard(rows: string[][]): BoardInput {
     list.push(ref);
     groups.set(ref.category, list);
   }
-  if (groups.size > MAX_CATEGORIES) issues.push(`The board has ${groups.size} categories; the maximum is ${MAX_CATEGORIES}.`);
+  if (groups.size > MAX_CATEGORIES) issues.push(`The file has ${groups.size} categories; one game board supports at most ${MAX_CATEGORIES} (maximum is ${MAX_CATEGORIES}). Keep one round with no more than ${MAX_CATEGORIES} categories and upload it again.`);
   if (groups.size === 0 && issues.length === 0) issues.push('No usable rows found under the header row.');
 
   for (const [name, list] of groups) {
-    if (list.length > MAX_CELLS_PER_CATEGORY) issues.push(`Category "${name}" has ${list.length} clues; the maximum is ${MAX_CELLS_PER_CATEGORY}.`);
+    if (list.length > MAX_CELLS_PER_CATEGORY) issues.push(`Category "${name}" has ${list.length} clues; one category supports at most ${MAX_CELLS_PER_CATEGORY}. Trim this category or save a single round separately.`);
     const seen = new Map<number, number>();
     for (const ref of list) {
       if (ref.value === null) continue;

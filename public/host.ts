@@ -1,7 +1,7 @@
 import type { HostCommand, PublicCell, ServerMessage, Team, View } from '../src/protocol';
 
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
-const ADJUST_STEP = 100;
+const ADJUST_STEPS = [100, 500];
 
 let socket: WebSocket | undefined;
 let state: View | undefined;
@@ -46,7 +46,14 @@ function connect() {
   socket?.close();
   welcomed = false;
   setPill('Connecting', true);
-  el('room-code').textContent = `Join at ${location.host}  ·  CODE ${code.slice(0, 4)} ${code.slice(4)}`;
+  const roomCode = el('room-code');
+  const joinLabel = document.createElement('span');
+  joinLabel.className = 'join-label';
+  joinLabel.textContent = `Join at ${location.host}`;
+  const codeValue = document.createElement('strong');
+  codeValue.className = 'join-code';
+  codeValue.textContent = `${code.slice(0, 4)} ${code.slice(4)}`;
+  roomCode.replaceChildren(joinLabel, codeValue);
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
   const params = new URLSearchParams({ role: 'host', token });
   socket = new WebSocket(`${protocol}//${location.host}/api/rooms/${code}/ws?${params}`);
@@ -61,8 +68,9 @@ function connect() {
     state = msg.state;
     render();
   };
-  socket.onclose = () => {
+  socket.onclose = event => {
     setPill('Offline', true);
+    if (event.reason === 'Host reconnected') { showGate('This host link is open on another screen.'); return; }
     if (!welcomed) { showGate('Could not open this room. Check the code and host link.'); return; }
     retries += 1;
     reconnectTimer = window.setTimeout(connect, Math.min(1000 * 2 ** (retries - 1), 8000));
@@ -74,14 +82,14 @@ el<HTMLFormElement>('gate-form').onsubmit = event => {
   code = el<HTMLInputElement>('gate-code').value.trim().toUpperCase();
   token = el<HTMLInputElement>('gate-token').value.trim();
   if (!/^[A-Z2-9]{8}$/.test(code) || !token) { el('gate-err').textContent = 'Enter the 8-letter room code and host token.'; return; }
-  history.replaceState(null, '', `?host=${code}&token=${encodeURIComponent(token)}`);
+  history.replaceState(null, '', location.pathname);
   sessionStorage.setItem('host:last', JSON.stringify({ code, token }));
   retries = 0;
   connect();
 };
 
 if (code && token) {
-  history.replaceState(null, '', `?host=${code}&token=${encodeURIComponent(token)}`);
+  history.replaceState(null, '', location.pathname);
   sessionStorage.setItem('host:last', JSON.stringify({ code, token }));
   connect();
 } else showGate('');
@@ -129,7 +137,7 @@ function renderBoard() {
       if (!cell.revealed) remaining += 1;
       const tile = document.createElement('button');
       tile.className = cell.revealed ? 'tile empty' : 'tile value';
-      if (cell.dailyDouble && !cell.revealed) tile.classList.add('dd');
+      // Keep daily doubles hidden until the cell is picked.
       tile.textContent = cell.revealed ? '' : cell.value.toLocaleString();
       tile.setAttribute('aria-label', `${category.name} for ${cell.value}`);
       tile.disabled = cell.revealed || state.phase !== 'board';
@@ -147,7 +155,7 @@ function renderReveal() {
   el('reveal-kicker').textContent = `${picked.category} · ${picked.cell.value.toLocaleString()}`;
   el('reveal-clue').textContent = picked.cell.question ?? '';
   const answer = el('reveal-answer');
-  answer.hidden = !picked.cell.answer;
+  answer.hidden = state.phase !== 'resolving' || !picked.cell.answer;
   el('reveal-answer-text').textContent = picked.cell.answer ?? '';
   const buzzed = el('reveal-buzzed');
   const answering = state.buzzQueue[0];
@@ -186,11 +194,11 @@ function renderScores() {
     name.textContent = team.name;
     const adjust = document.createElement('span');
     adjust.className = 'adj';
-    for (const delta of [-ADJUST_STEP, ADJUST_STEP]) {
+    for (const step of ADJUST_STEPS) for (const delta of [-step, step]) {
       const button = document.createElement('button');
       button.type = 'button';
-      button.textContent = delta > 0 ? `+${ADJUST_STEP}` : `-${ADJUST_STEP}`;
-      button.setAttribute('aria-label', `${delta > 0 ? 'Add' : 'Subtract'} ${ADJUST_STEP} ${delta > 0 ? 'to' : 'from'} ${team.name}`);
+      button.textContent = delta > 0 ? `+${step}` : `-${step}`;
+      button.setAttribute('aria-label', `${delta > 0 ? 'Add' : 'Subtract'} ${step} ${delta > 0 ? 'to' : 'from'} ${team.name}`);
       button.onclick = () => send({ type: 'adjust_score', teamId: team.id, delta });
       adjust.append(button);
     }
@@ -242,8 +250,8 @@ function renderControls() {
 }
 
 el<HTMLButtonElement>('cmd-arm').onclick = () => send({ type: 'arm_buzzers' });
-el<HTMLButtonElement>('cmd-correct').onclick = () => send({ type: 'correct' });
-el<HTMLButtonElement>('cmd-wrong').onclick = () => send({ type: 'wrong' });
+el<HTMLButtonElement>('cmd-correct').onclick = () => { const teamId = state?.buzzQueue[0]; if (teamId) send({ type: 'correct', teamId }); };
+el<HTMLButtonElement>('cmd-wrong').onclick = () => { const teamId = state?.buzzQueue[0]; if (teamId) send({ type: 'wrong', teamId }); };
 el<HTMLButtonElement>('cmd-back').onclick = () => send({ type: 'back_to_board' });
 
 function tick() {

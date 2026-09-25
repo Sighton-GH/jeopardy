@@ -1,3 +1,14 @@
 @import url('/theme.css');
-/* Keep the design mock's geometry, with short functional copy. */
-.landing .intro h1{max-width:700px}.landing .outline{display:inline-flex;text-decoration:none;align-items:center}
+/* SLxCA join screen: inspired by a game PIN flow, not third-party assets. */
+:root{--accent:#f5427b;--board-gold:#ffcc57;--focus:0 0 0 3px #fff,0 0 0 6px #f5427b}
+.landing{background:radial-gradient(circle at 85% 15%,#b346fb 0 17%,transparent 17.2%),radial-gradient(circle at 4% 94%,#4719b5 0 23%,transparent 23.2%),linear-gradient(130deg,#6417d7 0%,#3b0b96 65%,#280b65 100%)}
+.landing .topbar{border:0;background:#23104982;box-shadow:0 2px 15px #23085a38}
+.landing .brand{font-size:22px;letter-spacing:-.025em}.landing .brand small{font-size:14px;letter-spacing:0;color:#fff}.landing .brand-mark{background:#ffcc57;width:12px;height:25px;transform:rotate(-14deg);border-radius:2px}
+.landing .topbar a{font-weight:800;color:#fff;text-decoration:none;border:1px solid #fff9;padding:10px 17px;border-radius:10px}
+.landing-main{max-width:1120px;grid-template-columns:1fr 420px;gap:7vw;padding:45px 40px;min-height:calc(100dvh - 74px)}
+.intro .event{color:#ffcc57;font-size:19px;letter-spacing:.19em}.intro h1{font-family:Arial,Helvetica,sans-serif;font-size:clamp(58px,7vw,110px);letter-spacing:-.075em;line-height:.96;color:#fff;margin:16px 0}.intro h1 span{color:#ffcc57}
+.entry{background:#fff;color:#1d1735;border:0;border-radius:18px;padding:34px;box-shadow:0 10px 0 #21086160,0 28px 65px #17064370}.entry h2{font-size:32px;letter-spacing:-.04em;margin:0 0 22px}.entry label{color:#463d59;margin:16px 0 7px;font-size:13px;letter-spacing:.04em}.entry input{border:2px solid #c1b9d2;border-radius:9px;background:#fff;height:55px;font-weight:700;color:#211633}.entry input:focus{border-color:#7021d1;outline:3px solid #cfafff}.entry input::placeholder{font-weight:500;color:#716c7c}
+.entry .primary{display:block;text-align:center;background:#24212b;color:#fff;border-radius:9px;box-shadow:0 4px 0 #100e15;margin-top:24px;width:100%;font-size:20px}.entry .primary:hover{background:#4f158f}.entry .primary:active{transform:translateY(3px);box-shadow:0 1px 0 #100e15}
+.create-line{border-color:#e7e0ef;margin-top:28px;padding-top:22px}.create-line span{color:#655a72}.landing .outline{display:inline-flex;text-decoration:none;align-items:center;border:0;background:#e8defc;color:#45218b;border-radius:9px;font-weight:900}.landing .outline:hover{background:#d5c0fa}
+@media(max-width:850px){.landing-main{grid-template-columns:1fr;gap:22px;min-height:auto;padding:35px 20px;max-width:500px}.intro h1{font-size:54px}.intro h1 span{display:inline}.intro .event{font-size:14px}.entry{padding:26px}.landing .topbar{padding:0 20px}.landing .topbar a{font-size:12px}}
+@media(max-width:550px){.intro h1{font-size:48px}.create-line{flex-direction:row;align-items:center}.landing .brand{font-size:17px}.landing .brand small{font-size:12px}}

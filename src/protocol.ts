@@ -11,8 +11,8 @@ export type HostCommand =
   | { type: 'load_board'; board: BoardInput }
   | { type: 'pick_cell'; cellId: string }
   | { type: 'arm_buzzers' }
-  | { type: 'correct' }
-  | { type: 'wrong' }
+  | { type: 'correct'; teamId: string }
+  | { type: 'wrong'; teamId: string }
   | { type: 'back_to_board' }
   | { type: 'adjust_score'; teamId: string; delta: number };
 export type ClientMessage = HostCommand | { type: 'buzz' } | { type: 'ping' };

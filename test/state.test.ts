@@ -14,12 +14,29 @@ describe('state machine', () => {
   it('queues buzzers, penalizes wrong, advances to next, and awards correct', () => {
     const s = setup(); buzz(s, 't1', 1000); buzz(s, 't2', 1001);
     expect(s.buzzQueue).toEqual(['t1', 't2']); expect(s.buzzerDeadline).toBe(16000);
-    hostCommand(s, { type: 'wrong' }, 2000); expect(s.teams[0]?.score).toBe(-200); expect(s.buzzQueue).toEqual(['t2']); expect(s.buzzerDeadline).toBe(17000);
-    expect(() => buzz(s, 't1', 2001)).toThrow(); hostCommand(s, { type: 'correct' }, 3000);
+    hostCommand(s, { type: 'wrong', teamId: 't1' }, 2000); expect(s.teams[0]?.score).toBe(-200); expect(s.buzzQueue).toEqual(['t2']); expect(s.buzzerDeadline).toBe(17000);
+    expect(() => buzz(s, 't1', 2001)).toThrow(); hostCommand(s, { type: 'correct', teamId: 't2' }, 3000);
     expect(s.teams[1]?.score).toBe(200); expect(s.board[0]?.cells[0]?.revealed).toBe(true);
     hostCommand(s, { type: 'back_to_board' }, 3001); expect(s.phase).toBe('board');
     expect(() => hostCommand(s, { type: 'pick_cell', cellId: 'q1' }, 3002)).toThrow();
   });
   it('times out active answerer without penalty and reopens buzzers', () => { const s = setup(); buzz(s, 't1', 100); expect(timeout(s, 15099)).toBe(false); expect(timeout(s, 15100)).toBe(true); expect(s.phase).toBe('buzz-open'); expect(s.teams[0]?.score).toBe(0); expect(s.lockedOut).toEqual(['t1']); });
+  it('rejects stale adjudication after answerer changes', () => {
+    const s = setup(); buzz(s, 't1', 100); buzz(s, 't2', 101);
+    timeout(s, 15100);
+    expect(s.buzzQueue[0]).toBe('t2');
+    expect(() => hostCommand(s, { type: 'correct', teamId: 't1' }, 15101)).toThrow('Answerer changed');
+    expect(() => hostCommand(s, { type: 'wrong', teamId: 't1' }, 15101)).toThrow('Answerer changed');
+    expect(s.teams.map(t => t.score)).toEqual([0, 0]);
+  });
+  it('does not consume an unarmed cell and hides daily double until picked', () => {
+    const s = initialState();
+    hostCommand(s, { type: 'load_board', board: { categories: [{ id: 'c', name: 'Test', cells: [{ id: 'q', question: 'Q', answer: 'A', value: 200, dailyDouble: true }] }] } }, 0);
+    expect(view(s, false).board[0]?.cells[0]?.dailyDouble).toBe(false);
+    hostCommand(s, { type: 'pick_cell', cellId: 'q' }, 1);
+    expect(view(s, false).board[0]?.cells[0]?.dailyDouble).toBe(true);
+    hostCommand(s, { type: 'back_to_board' }, 2);
+    expect(s.board[0]?.cells[0]?.revealed).toBe(false);
+  });
   it('validates malformed board and score adjustments', () => { const s = initialState(); expect(() => hostCommand(s, { type: 'load_board', board: { categories: [] } }, 0)).toThrow(); addTeam(s, 't', 'Team'); hostCommand(s, { type: 'adjust_score', teamId: 't', delta: -300 }, 0); expect(s.teams[0]?.score).toBe(-300); expect(() => hostCommand(s, { type: 'adjust_score', teamId: 't', delta: 2.5 }, 0)).toThrow(); });
 });
