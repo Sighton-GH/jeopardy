@@ -1,0 +1,36 @@
+/* Phone buzzer, adapted from the supplied SLxCA design theme. */
+:root{--ink:#151a2a;--accent:#bd304b;--gold:#f2c762;--focus:0 0 0 3px #fff,0 0 0 6px var(--accent)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Arial,Helvetica,sans-serif}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+.player{min-height:100vh;min-height:100dvh;background:#f4f1e9;color:var(--ink);display:flex;flex-direction:column}
+.player-head{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 22px;border-bottom:1px solid #d8d4cb}
+.brand{font-size:14px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:12px;white-space:nowrap}
+.brand-mark{width:10px;height:23px;background:var(--accent);transform:skew(-12deg);flex:none}
+.brand small{font-size:11px;font-weight:500;letter-spacing:.1em;color:#4b5566}
+.pill{border:1px solid #59627c;border-radius:100px;padding:8px 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.player-main{padding:26px 22px max(18px,env(safe-area-inset-bottom));max-width:520px;width:100%;margin:auto;display:flex;flex-direction:column;flex:1;min-height:0}
+.team{font-size:13px;text-transform:uppercase;letter-spacing:.11em;color:#485265;font-weight:900}
+.team strong{display:block;text-transform:none;letter-spacing:-.03em;font-size:32px;color:var(--ink);margin:3px 0;overflow-wrap:anywhere}
+.player-score{font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#1d3690;font-weight:900}
+.player-state{border-top:4px solid var(--accent);margin:27px 0 12px;padding-top:20px;text-align:center;min-height:101px}
+.player-state h1{font-size:27px;margin:0 0 7px;letter-spacing:-.035em}
+.player-state p{margin:0;color:#4f5968;line-height:1.4}
+.buzz{display:flex;align-items:center;justify-content:center;width:min(72vw,320px);height:min(72vw,320px);min-height:205px;max-height:320px;border-radius:50%;border:10px solid #871f34;background:var(--accent);box-shadow:0 12px 0 #771a2e,0 22px 28px #0004;color:#fff;text-transform:uppercase;font-size:clamp(35px,10vw,54px);font-weight:1000;letter-spacing:-.045em;align-self:center;margin:auto 0;touch-action:manipulation;user-select:none}
+.buzz:active:not(:disabled){transform:translateY(7px);box-shadow:0 5px 0 #771a2e,0 12px 19px #0004}
+.buzz:disabled{background:#88909a;border-color:#616b77;box-shadow:0 8px 0 #59616c;color:#fff;cursor:not-allowed}
+.player-bottom{text-align:center;font-size:14px;color:#505868;line-height:1.4;margin:18px 0 0;min-height:20px}
+.player-bottom b{color:var(--ink)}
+.connection-note{border-radius:4px;background:#fff1e9;border:1px solid #9e2439;color:#762137;padding:10px 12px;text-align:center;font-size:14px;line-height:1.35;margin:10px 0 0}
+.back-link{align-self:center;color:#485265;font-size:12px;margin:13px 0 0;text-underline-offset:3px}
+.player[data-state=waiting] .player-state{border-color:#88909a}
+.player[data-state=locked] .player-state{border-color:#1c8d61}
+.player[data-state=locked] .buzz:disabled{background:#248d64;border-color:#14744f;box-shadow:0 8px 0 #106643}
+.player[data-state=locked][data-lock-reason=out] .player-state{border-color:#88909a}
+.player[data-state=locked][data-lock-reason=out] .buzz:disabled{background:#88909a;border-color:#616b77;box-shadow:0 8px 0 #59616c}
+[hidden]{display:none!important}
+@media(max-width:550px){.player-head .brand small{display:none}}
+@media(max-height:700px){.player-head{min-height:60px}.player-main{padding-top:16px}.player-state{margin-top:16px;padding-top:12px;min-height:80px}.buzz{width:min(55vh,65vw,260px);height:min(55vh,65vw,260px);min-height:170px}.back-link{margin-top:8px}}
+@media(prefers-reduced-motion:no-preference){.buzz{transition:transform .1s,background .16s}}
