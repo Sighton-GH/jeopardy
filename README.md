@@ -1,6 +1,6 @@
 # Jeopardy foundation
 
-Cloudflare Worker with static assets and one in-memory Durable Object for each 8-character game code. No accounts, database, or persistent room storage. A room is temporary; a Worker/DO restart or idle eviction can end it. Do not use for a long-lived event without adding persistence/recovery. Host control and board upload are protocol seams, not yet a full host UI. The landing page creates a room and joins up to 10 teams; the phone buzzer is functional once a board is loaded via a later host view.
+Cloudflare Worker with static assets and one in-memory Durable Object for each 8-character game code. No accounts, database, or persistent room storage. A room is temporary; a Worker/DO restart or idle eviction can end it. Do not use for a long-lived event without adding persistence/recovery. Create a room by uploading a CSV or XLSX board at `/create`, then share the eight-character code with up to 10 teams. The host board and phone buzzer update through WebSockets.
 
 ## Run
 
@@ -11,7 +11,7 @@ npm run build
 npm run dev
 ```
 
-`wrangler dev` serves frontend assets from `dist`; run `npm run build` first. Deploy with `npm run deploy`. Route `jeopardy.sighton.ca` in Cloudflare separately; no production DNS or deployment is included.
+`npm run check` builds `dist` before running TypeScript, ESLint, and Vitest (the Workers test pool requires the assets directory). `wrangler dev` serves the built frontend assets from `dist`. The four pages are `/`, `/create`, `/host`, and `/player`; Workers Assets redirects `.html` URLs to the clean path and preserves query parameters. Deploy with `npm run deploy`. Route `jeopardy.sighton.ca` in Cloudflare separately; no production DNS or deployment is included.
 
 ## Protocol (JSON WebSocket)
 
@@ -27,6 +27,8 @@ Team sends `buzz` (or `ping`). Host sends:
 
 The first buzz is current answerer. Subsequent buzzes queue in arrival order. A 15-second timer starts per active answerer; expiry locks that team out without a score penalty and advances the queue. Daily doubles are stored but not yet given special wager behavior. On `correct`, the cell is revealed; `back_to_board` also reveals the cell, even if unanswered. Scores may be negative. Replacing a board resets its revealed flags, so use only for initial setup in normal play.
 
-## Integration seams
+## Frontend flow
 
-The next host view should keep its host token in the URL/session, connect as host, render the host `state`, and send the typed commands from `src/protocol.ts`. A spreadsheet parser should validate and normalize uploaded rows client-side or in a new Worker endpoint into `BoardInput` and then send `load_board` over the authenticated host socket. Keep raw spreadsheets out of the room DO. Theme config belongs in frontend configuration/assets, not game rules. Future views can replace `public/app.ts` without changing the state machine. The `View` contract intentionally separates host and team visibility. Add a board/display route and question rendering there; the existing player page shows status and buzzer only.
+The landing join form sends players to `/player.html?code=CODE&name=NAME` with encoded values; Workers Assets canonicalizes this to `/player`. Create at `/create`: upload a Jeopardy Labs export or a simple CSV/XLSX sheet, review the parsed categories, then create the room and load the board over the host WebSocket. The server-issued private host URL uses `/host.html?host=CODE&token=TOKEN` and canonicalizes to `/host` in local Wrangler. Do not share the token or host URL with players. The board, controls, team buzzers, score adjustments and reconnects use live room state.
+
+The design source mocks and theme are in `design/` for reference; the live landing imports `public/theme.css`, the host retains the theme plus its own CSS rules, and the create and player views retain their slice styles. The design mock data is not used as game data.

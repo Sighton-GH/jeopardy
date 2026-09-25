@@ -12,7 +12,7 @@ export default {
         const code = secret(8), token = crypto.randomUUID() + crypto.randomUUID();
         const room = env.ROOM.get(env.ROOM.idFromName(code));
         const init = await room.fetch(new Request('https://room/init', { method: 'POST', body: JSON.stringify({ hostToken: token }) }));
-        if (init.ok) return response({ code, hostUrl: `${url.origin}/?host=${code}&token=${token}` }, 201);
+        if (init.ok) return response({ code, hostUrl: `${url.origin}/host.html?host=${code}&token=${token}` }, 201);
         if (init.status !== 409) return response({ error: 'Room creation failed' }, 500);
       }
       return response({ error: 'Could not generate a unique room code' }, 503);

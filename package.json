@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.public.json",
     "lint": "eslint .",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run build && npm run typecheck && npm run lint && npm test"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.68",
