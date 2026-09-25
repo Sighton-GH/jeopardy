@@ -121,6 +121,11 @@ export class Room extends DurableObject<Env> {
     try {
       if (typeof data !== 'string') throw new GameError('message', 'Invalid message');
       if (data.length > 100000) throw new GameError('size', 'Board or message is too large (100 KB maximum).');
+      // A delayed timer callback must not make an expired answer window actionable.
+      // Settle the deadline before accepting a buzz or an adjudication.
+      if (this.game.buzzerDeadline !== null && Date.now() >= this.game.buzzerDeadline) {
+        if (timeout(this.game, Date.now())) { this.schedule(); this.broadcast(); }
+      }
       const msg = JSON.parse(data) as ClientMessage;
       if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') throw new GameError('message', 'Invalid message');
       if (msg.type === 'ping') { this.send(ws, { type: 'pong' }); return; }

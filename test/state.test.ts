@@ -40,3 +40,18 @@ describe('state machine', () => {
   });
   it('validates malformed board and score adjustments', () => { const s = initialState(); expect(() => hostCommand(s, { type: 'load_board', board: { categories: [] } }, 0)).toThrow(); addTeam(s, 't', 'Team'); hostCommand(s, { type: 'adjust_score', teamId: 't', delta: -300 }, 0); expect(s.teams[0]?.score).toBe(-300); expect(() => hostCommand(s, { type: 'adjust_score', teamId: 't', delta: 2.5 }, 0)).toThrow(); });
 });
+
+it('rejects adjudication that would overflow a safe integer score', () => {
+  const s = initialState();
+  hostCommand(s, { type: 'load_board', board: { categories: [{ id: 'c', name: 'C', cells: [{ id: 'q', question: 'Q', answer: 'A', value: 200, dailyDouble: false }] }] } }, 0);
+  addTeam(s, 'a', 'Alpha');
+  s.teams[0]!.score = Number.MAX_SAFE_INTEGER - 100;
+  hostCommand(s, { type: 'pick_cell', cellId: 'q' }, 0);
+  hostCommand(s, { type: 'arm_buzzers' }, 0);
+  buzz(s, 'a', 0);
+  expect(() => hostCommand(s, { type: 'correct', teamId: 'a' }, 1)).toThrow('safe range');
+  expect(s.teams[0]!.score).toBe(Number.MAX_SAFE_INTEGER - 100);
+  s.teams[0]!.score = Number.MIN_SAFE_INTEGER + 100;
+  expect(() => hostCommand(s, { type: 'wrong', teamId: 'a' }, 1)).toThrow('safe range');
+  expect(s.teams[0]!.score).toBe(Number.MIN_SAFE_INTEGER + 100);
+});

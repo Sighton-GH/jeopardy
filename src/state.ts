@@ -75,6 +75,7 @@ export function hostCommand(s: GameState, command: HostCommand, now: number): vo
       if (command.teamId !== s.buzzQueue[0]) fail('stale', 'Answerer changed. Check the current team.');
       const cell = selected(s), team = s.teams.find(t => t.id === command.teamId);
       if (!cell || !team) throw new GameError('state', 'Missing cell or team');
+      if (!Number.isSafeInteger(team.score + cell.value)) fail('score', 'Score exceeds the safe range');
       team.score += cell.value; cell.revealed = true; s.phase = 'resolving'; s.buzzerDeadline = null; s.buzzQueue = []; break;
     }
     case 'wrong': {
@@ -82,6 +83,7 @@ export function hostCommand(s: GameState, command: HostCommand, now: number): vo
       if (command.teamId !== s.buzzQueue[0]) fail('stale', 'Answerer changed. Check the current team.');
       const cell = selected(s), team = s.teams.find(t => t.id === command.teamId);
       if (!cell || !team) throw new GameError('state', 'Missing cell or team');
+      if (!Number.isSafeInteger(team.score - cell.value)) fail('score', 'Score exceeds the safe range');
       team.score -= cell.value; s.lockedOut.push(team.id); advance(s, now); break;
     }
     case 'back_to_board':
