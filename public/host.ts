@@ -27,11 +27,6 @@ function send(command: HostCommand) {
   if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(command));
 }
 
-function setPill(text: string, down: boolean) {
-  el('pill-text').textContent = text;
-  el('pill').classList.toggle('down', down);
-}
-
 function showGate(error: string) {
   el('gate').hidden = false;
   el<HTMLInputElement>('gate-code').value = code;
@@ -45,7 +40,7 @@ function connect() {
   window.clearTimeout(reconnectTimer);
   socket?.close();
   welcomed = false;
-  setPill('Connecting', true);
+  el('notice').textContent = 'Connecting…';
   const roomCode = el('room-code');
   const joinLabel = document.createElement('span');
   joinLabel.className = 'join-label';
@@ -63,13 +58,13 @@ function connect() {
     if (msg.type === 'error') { el('notice').textContent = msg.message; return; }
     welcomed = true;
     retries = 0;
-    setPill('Game live', false);
+
     el('notice').textContent = '';
     state = msg.state;
     render();
   };
   socket.onclose = event => {
-    setPill('Offline', true);
+    el('notice').textContent = 'Connection lost. Reconnecting…';
     if (event.reason === 'Host reconnected') { showGate('This host link is open on another screen.'); return; }
     if (!welcomed) { showGate('Could not open this room. Check the code and host link.'); return; }
     retries += 1;

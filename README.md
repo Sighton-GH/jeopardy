@@ -42,3 +42,5 @@ This app runs one Jeopardy round. Daily-double cells are hidden until selected b
 ## Dependency audit (2026-09-25)
 
 `npm audit` reports seven development-tool advisories (two moderate, five high), in Vitest, its Cloudflare Workers pool and transitive packages (including Wrangler, Miniflare, sharp, and ws). An attempted major pool/Vitest bump did not pass TypeScript because `cloudflare:test` is unavailable from that release with the current test setup, so the lockfile retains the last tested versions. Do not describe the advisories as fixed; migrate the test harness and re-audit before production deployment. The deployed Worker bundle does not use these dev-only testing packages, but the tooling should still be updated.
+
+Visual shell: game-style rounded controls, large join code, blue-and-white SLxCA palette. The host board keeps its deep Jeopardy blue layout. No live-status badge is shown; connection failures appear as text only when needed.

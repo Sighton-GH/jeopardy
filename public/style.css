@@ -12,3 +12,8 @@
 .create-line{border-color:#e7e0ef;margin-top:28px;padding-top:22px}.create-line span{color:#655a72}.landing .outline{display:inline-flex;text-decoration:none;align-items:center;border:0;background:#e8defc;color:#45218b;border-radius:9px;font-weight:900}.landing .outline:hover{background:#d5c0fa}
 @media(max-width:850px){.landing-main{grid-template-columns:1fr;gap:22px;min-height:auto;padding:35px 20px;max-width:500px}.intro h1{font-size:54px}.intro h1 span{display:inline}.intro .event{font-size:14px}.entry{padding:26px}.landing .topbar{padding:0 20px}.landing .topbar a{font-size:12px}}
 @media(max-width:550px){.intro h1{font-size:48px}.create-line{flex-direction:row;align-items:center}.landing .brand{font-size:17px}.landing .brand small{font-size:12px}}
+
+/* SLxCA event palette: Schulich Leaders blue, warm red trim, gold Jeopardy action. */
+:root{--accent:#2f62a5;--board-gold:#ffffff;--focus:0 0 0 3px #fff,0 0 0 6px #2f62a5}
+.landing{background:radial-gradient(circle at 91% 8%,#8db5e0 0 17%,transparent 17.2%),radial-gradient(circle at 2% 100%,#194778 0 23%,transparent 23.2%),linear-gradient(133deg,#386fb4,#1c4e90 60%,#153c74)}
+.landing .topbar{background:#103764bf;box-shadow:0 2px 15px #09294b4d}.landing .brand-mark{background:#ffffff}.intro .event,.intro h1 span{color:#ffffff}.entry{box-shadow:0 10px 0 #0e345d,0 28px 65px #09294b7a}.entry input:focus{border-color:#2f62a5;outline:3px solid #adcaee}.entry .primary:hover{background:#23548f}.landing .outline{background:#e6f0fb;color:#174982}.landing .outline:hover{background:#cfe3f8}
