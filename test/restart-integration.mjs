@@ -31,8 +31,8 @@ try {
  a.ws.send(JSON.stringify({type:'buzz'}));await delay(100);b.ws.send(JSON.stringify({type:'buzz'}));await delay(250);
  assert.equal(host.events.at(-1).state.phase,'buzzed'); assert.deepEqual(host.events.at(-1).state.buzzQueue,[a.welcome.teamId,b.welcome.teamId]);
  const beforeDeadline=host.events.at(-1).state.buzzerDeadline; assert.ok(beforeDeadline>Date.now());
- if (mode === 'expired-answer') await delay(Math.max(0, beforeDeadline-Date.now()+200));
  await stop();
+ if (mode === 'expired-answer') await delay(Math.max(0, beforeDeadline-Date.now()+200));
  await start();
  const rh=await connect(code,new URLSearchParams({role:'host',token}));
  const ra=await connect(code,new URLSearchParams({role:'team',name:'Alpha',reconnect:at}));
