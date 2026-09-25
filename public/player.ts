@@ -50,6 +50,10 @@ function render(state: View) {
     showWaiting(state.hostConnected ? 'Joining your team' : 'Wait for the host', state.hostConnected ? 'Please wait.' : 'Watch the big screen.');
     return;
   }
+  if (state.phase === 'complete') {
+    showWaiting('Game over', 'Final scores are on the host screen.', 'Thanks for playing.');
+    return;
+  }
   const first = state.buzzQueue[0] === teamId;
   const queued = state.buzzQueue.includes(teamId!);
   const out = state.lockedOut.includes(teamId!);

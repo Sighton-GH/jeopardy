@@ -85,9 +85,14 @@ export function hostCommand(s: GameState, command: HostCommand, now: number): vo
       team.score -= cell.value; s.lockedOut.push(team.id); advance(s, now); break;
     }
     case 'back_to_board':
-      if (s.phase === 'lobby') fail('phase', 'No board loaded');
+      if (s.phase === 'lobby' || s.phase === 'complete') fail('phase', 'No active clue');
       if (s.selectedCellId && s.phase !== 'question-showing') { const cell = selected(s); if (cell) cell.revealed = true; }
-      s.phase = 'board'; s.selectedCellId = null; s.buzzQueue = []; s.lockedOut = []; s.buzzerDeadline = null; break;
+      s.phase = s.board.length && s.board.every(category => category.cells.every(cell => cell.revealed)) ? 'complete' : 'board'; s.selectedCellId = null; s.buzzQueue = []; s.lockedOut = []; s.buzzerDeadline = null; break;
+    case 'readmit_team': {
+      const team = s.teams.find(t => t.id === command.teamId);
+      if (!team || team.connected) fail('team', 'Choose a disconnected team to re-admit');
+      break;
+    }
     case 'adjust_score': {
       if (!Number.isSafeInteger(command.delta) || Math.abs(command.delta) > 100000) fail('score', 'Invalid adjustment');
       const team = s.teams.find(t => t.id === command.teamId);

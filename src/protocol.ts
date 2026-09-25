@@ -1,5 +1,5 @@
 /** Wire protocol v1. Every client message is JSON; invalid messages receive an error. */
-export type Phase = 'lobby' | 'board' | 'question-showing' | 'buzz-open' | 'buzzed' | 'resolving';
+export type Phase = 'lobby' | 'board' | 'question-showing' | 'buzz-open' | 'buzzed' | 'resolving' | 'complete';
 export interface Cell { id: string; question: string; answer: string; value: number; dailyDouble: boolean; revealed: boolean }
 export interface Category { id: string; name: string; cells: Cell[] }
 export interface Team { id: string; name: string; score: number; connected: boolean }
@@ -14,7 +14,8 @@ export type HostCommand =
   | { type: 'correct'; teamId: string }
   | { type: 'wrong'; teamId: string }
   | { type: 'back_to_board' }
-  | { type: 'adjust_score'; teamId: string; delta: number };
+  | { type: 'adjust_score'; teamId: string; delta: number }
+  | { type: 'readmit_team'; teamId: string };
 export type ClientMessage = HostCommand | { type: 'buzz' } | { type: 'ping' };
 export type ServerMessage =
   | { type: 'welcome'; role: 'host' | 'team'; teamId?: string; reconnectToken?: string; state: View }

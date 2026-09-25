@@ -40,6 +40,23 @@ describe('room Durable Object', () => {
     expect((last?.state as { teams: { id: string; score: number }[] }).teams.find(t => t.id === red)?.score).toBe(200);
     host.close(); oldHost.close(); two.close();
   });
+  it('re-admits a disconnected team from a fresh device and invalidates its old token', async () => {
+    const room = env.ROOM.get(env.ROOM.idFromName(crypto.randomUUID()));
+    const token = 'c'.repeat(40);
+    await room.fetch(new Request('https://room/init', { method: 'POST', body: JSON.stringify({ hostToken: token }) }));
+    const host = await connect(room, `role=host&token=${token}`);
+    const team = await connect(room, 'role=team&name=Blue');
+    const events = messages(team); await sleep();
+    const welcome = events.find(e => e.type === 'welcome') as { teamId: string; reconnectToken: string };
+    team.close(); await sleep();
+    host.send(JSON.stringify({ type: 'readmit_team', teamId: welcome.teamId })); await sleep();
+    const fresh = await connect(room, 'role=team&name=blue');
+    const freshEvents = messages(fresh); await sleep();
+    expect((freshEvents.find(e => e.type === 'welcome') as { teamId: string }).teamId).toBe(welcome.teamId);
+    const stale = await room.fetch(new Request(`https://room/ws?role=team&name=Blue&reconnect=${welcome.reconnectToken}`, { headers: { Upgrade: 'websocket' } }));
+    expect(stale.status).toBe(400);
+    host.close(); fresh.close();
+  });
   it('authenticates host, limits team commands, broadcasts redacted state', async () => {
     const room = env.ROOM.get(env.ROOM.idFromName(crypto.randomUUID()));
     const token = 'a'.repeat(40);

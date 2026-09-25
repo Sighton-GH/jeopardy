@@ -17,7 +17,7 @@ describe('state machine', () => {
     hostCommand(s, { type: 'wrong', teamId: 't1' }, 2000); expect(s.teams[0]?.score).toBe(-200); expect(s.buzzQueue).toEqual(['t2']); expect(s.buzzerDeadline).toBe(17000);
     expect(() => buzz(s, 't1', 2001)).toThrow(); hostCommand(s, { type: 'correct', teamId: 't2' }, 3000);
     expect(s.teams[1]?.score).toBe(200); expect(s.board[0]?.cells[0]?.revealed).toBe(true);
-    hostCommand(s, { type: 'back_to_board' }, 3001); expect(s.phase).toBe('board');
+    hostCommand(s, { type: 'back_to_board' }, 3001); expect(s.phase).toBe('complete');
     expect(() => hostCommand(s, { type: 'pick_cell', cellId: 'q1' }, 3002)).toThrow();
   });
   it('times out active answerer without penalty and reopens buzzers', () => { const s = setup(); buzz(s, 't1', 100); expect(timeout(s, 15099)).toBe(false); expect(timeout(s, 15100)).toBe(true); expect(s.phase).toBe('buzz-open'); expect(s.teams[0]?.score).toBe(0); expect(s.lockedOut).toEqual(['t1']); });

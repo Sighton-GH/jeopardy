@@ -109,6 +109,22 @@ function selectedCell(): { cell: PublicCell; category: string } | undefined {
 function renderBoard() {
   const board = el('board');
   board.replaceChildren();
+  if (state?.phase === 'complete') {
+    board.classList.add('placeholder', 'complete-board');
+    const wrap = document.createElement('div');
+    wrap.className = 'final-standings';
+    const heading = document.createElement('h1'); heading.textContent = 'Game over'; wrap.append(heading);
+    for (const [index, team] of [...state.teams].sort((a, b) => b.score - a.score).entries()) {
+      const row = document.createElement('div'); row.className = 'final-team';
+      const name = document.createElement('span'); name.textContent = `${index + 1}. ${team.name}`;
+      const score = document.createElement('strong'); score.textContent = team.score.toLocaleString();
+      row.append(name, score); wrap.append(row);
+    }
+    board.replaceChildren(wrap);
+    el('clues-left').textContent = 'Final standings';
+    return;
+  }
+  board.classList.remove('complete-board');
   if (!state || state.board.length === 0) {
     board.classList.add('placeholder');
     const hold = document.createElement('div');
@@ -194,6 +210,17 @@ function renderScores() {
     name.textContent = team.name;
     const adjust = document.createElement('span');
     adjust.className = 'adj';
+    if (!team.connected) {
+      const restore = document.createElement('button');
+      restore.type = 'button';
+      restore.className = 'readmit';
+      restore.textContent = 'Re-admit';
+      restore.setAttribute('aria-label', `Re-admit ${team.name}`);
+      restore.onclick = () => {
+        if (window.confirm(`Let a new device take over ${team.name}? The old reconnect link will stop working.`)) send({ type: 'readmit_team', teamId: team.id });
+      };
+      row.append(restore);
+    }
     for (const step of ADJUST_STEPS) for (const delta of [-step, step]) {
       const button = document.createElement('button');
       button.type = 'button';
@@ -219,6 +246,7 @@ function renderBuzzers() {
     case 'question-showing': hint.textContent = 'CLUE'; main.textContent = 'Reading'; sub.textContent = 'Arm buzzers when ready'; break;
     case 'buzz-open': hint.textContent = 'OPEN'; main.textContent = 'Buzzers open'; sub.textContent = 'Waiting for a buzz'; break;
     case 'buzzed': hint.textContent = 'BUZZED IN'; main.textContent = teamName(answering) || '-'; sub.textContent = 'Answering now'; break;
+    case 'complete': hint.textContent = 'FINISHED'; main.textContent = 'Game over'; sub.textContent = 'Final standings'; break;
     case 'resolving': hint.textContent = 'RESOLVED'; main.textContent = 'Clue done'; sub.textContent = 'Back to board'; break;
   }
   const queue = el('queue');
@@ -246,7 +274,7 @@ function renderControls() {
   el<HTMLButtonElement>('cmd-arm').disabled = phase !== 'question-showing';
   el<HTMLButtonElement>('cmd-correct').disabled = phase !== 'buzzed';
   el<HTMLButtonElement>('cmd-wrong').disabled = phase !== 'buzzed';
-  el<HTMLButtonElement>('cmd-back').disabled = !phase || phase === 'lobby' || phase === 'board';
+  el<HTMLButtonElement>('cmd-back').disabled = !phase || phase === 'lobby' || phase === 'board' || phase === 'complete';
 }
 
 el<HTMLButtonElement>('cmd-arm').onclick = () => send({ type: 'arm_buzzers' });

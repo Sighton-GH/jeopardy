@@ -14,6 +14,7 @@ export class Room extends DurableObject<Env> {
   private scheduledDeadline: number | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private tokens = new Map<string, string>();
+  private pendingReadmission = new Set<string>();
   private sessions = new Map<WebSocket, Session>();
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -53,9 +54,18 @@ export class Room extends DurableObject<Env> {
           if (!team || team.name.toLocaleLowerCase() !== name.toLocaleLowerCase() || team.connected) throw new GameError('auth', 'Invalid reconnect');
           team.connected = true; session = { role: 'team', teamId: team.id }; welcomeToken = reconnect!; this.game.version++;
         } else {
-          const teamId = crypto.randomUUID();
-          addTeam(this.game, teamId, name);
-          welcomeToken = crypto.randomUUID(); this.tokens.set(teamId, welcomeToken); session = { role: 'team', teamId };
+          const readmitted = this.game.teams.find(team => this.pendingReadmission.has(team.id) && !team.connected && team.name.toLocaleLowerCase() === name.trim().toLocaleLowerCase());
+          if (readmitted) {
+            this.pendingReadmission.delete(readmitted.id);
+            readmitted.connected = true;
+            this.game.version++;
+            welcomeToken = crypto.randomUUID(); this.tokens.set(readmitted.id, welcomeToken);
+            session = { role: 'team', teamId: readmitted.id };
+          } else {
+            const teamId = crypto.randomUUID();
+            addTeam(this.game, teamId, name);
+            welcomeToken = crypto.randomUUID(); this.tokens.set(teamId, welcomeToken); session = { role: 'team', teamId };
+          }
         }
       } else throw new GameError('role', 'Invalid role');
     } catch (error) {
@@ -109,6 +119,10 @@ export class Room extends DurableObject<Env> {
         if (msg.type === 'buzz') throw new GameError('role', 'Host cannot buzz');
         if (msg.type === 'load_board' && data.length > 85000) throw new GameError('size', 'Board is too large (85 KB maximum). Shorten clues or answers.');
         hostCommand(this.game, msg, Date.now());
+        if (msg.type === 'readmit_team') {
+          this.tokens.delete(msg.teamId);
+          this.pendingReadmission.add(msg.teamId);
+        }
       } else {
         if (msg.type !== 'buzz') throw new GameError('role', 'Only host may control the game');
         buzz(this.game, session.teamId, Date.now());
