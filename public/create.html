@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SLxCA Jeopardy - Create a game</title><style>
+/* Theme tokens from the SLxCA design slice, inlined so this page is self-contained. */
+:root{--stage:#080b18;--stage-2:#11182d;--board:#082a9b;--board-lit:#123bbb;--board-edge:#050d33;--board-gold:#f2c762;--white:#f9f8f3;--ink:#151a2a;--muted:#8790a9;--accent:#bd304b;--good:#49be85;--danger:#ed6b63;--line:#39425e;--font-ui:Arial,Helvetica,sans-serif;--font-display:Georgia,'Times New Roman',serif;--focus:0 0 0 3px #fff,0 0 0 6px var(--accent)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:var(--stage);color:var(--white);font-family:var(--font-ui)}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:none;box-shadow:var(--focus)}[hidden]{display:none!important}
+.brand{font-size:14px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:12px}.brand-mark{width:10px;height:23px;background:var(--accent);transform:skew(-12deg)}.brand small{font-size:11px;font-weight:500;letter-spacing:.1em;color:#b9bfd0}
+.topbar{height:74px;padding:0 42px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #313950}.topbar a{color:#d6d9e3;text-decoration:none;font-size:14px}.topbar a:hover{text-decoration:underline}
+.wrap{max-width:600px;margin:0 auto;padding:56px 22px 60px}
+.panel{border-top:5px solid var(--accent);background:#151b30;padding:36px 40px 38px;box-shadow:0 18px 60px #0003}
+.panel h1{font-size:31px;margin:0 0 7px}
+.panel>p{color:#bfc4d2;margin:0 0 26px;line-height:1.45}
+.drop{margin-bottom:6px;border:2px dashed #6e7791;border-radius:6px;background:#10172b;padding:42px 24px;text-align:center;color:#c8cbda}
+.drop.over{border-color:var(--board-gold);background:#182142}
+.drop p{margin:0 0 14px;font-size:17px}
+.drop small{display:block;margin-top:12px;color:var(--muted);font-size:13px}
+.outline{border:1px solid #c2cad9;background:transparent;color:#fff;border-radius:4px;padding:13px 18px;font-weight:800}.outline:hover{background:#25314e}
+.hint{margin:22px 0 0;font-size:13px;color:#bfc6d9;line-height:1.5}.hint code{background:#0c1226;padding:1px 5px;border-radius:3px;font-size:12px}
+.hint a{color:var(--board-gold)}
+.errors{list-style:none;margin:18px 0 0;padding:14px 16px;background:#3a1420;border-left:4px solid var(--danger);font-size:14px;line-height:1.5;color:#ffd9d4}
+.errors li+li{margin-top:6px}
+.preview{margin-top:24px}
+.preview h2{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#b8c0d6;margin:0 0 10px}
+.cat{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #303954;font-size:15px}
+.cat span:last-child{color:var(--muted)}
+.cat .dd{color:var(--board-gold)}
+.primary{background:var(--board-gold);color:#141622;border:0;border-radius:4px;padding:17px 22px;font-weight:900;font-size:18px;min-height:56px;width:100%;margin-top:28px}
+.primary:disabled{background:#59617a;color:#232839;cursor:not-allowed}
+.status{margin:14px 0 0;font-size:14px;color:#bfc6d9;min-height:20px}
+@media(max-width:550px){.topbar{height:64px;padding:0 22px}.panel{padding:27px 23px}}
+</style></head><body>
+<header class="topbar"><div class="brand"><i class="brand-mark" aria-hidden="true"></i>SLxCA <small>Jeopardy</small></div><a href="/">Join a game</a></header>
+<main class="wrap"><section class="panel">
+<h1>Create a game</h1>
+<p>Upload your board to get a game code and host link.</p>
+<div class="drop" id="drop">
+<p>Drop your board file here</p>
+<button class="outline" id="choose" type="button">Choose file</button>
+<input type="file" id="file" accept=".csv,.xlsx" hidden>
+<small>.csv or .xlsx</small>
+</div>
+<p class="hint">Jeopardy Labs export (<code>round, cat, value, q, a, dd</code>) or a sheet with <code>category, question, answer, value</code>. <a href="#" id="template">Download a template</a></p>
+<ul class="errors" id="errors" hidden></ul>
+<div class="preview" id="preview" hidden>
+<h2>Your board</h2>
+<div id="cats"></div>
+<button class="primary" id="create" type="button">Create game</button>
+</div>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+</section></main>
+<script type="module" src="/create.ts"></script>
+</body></html>
