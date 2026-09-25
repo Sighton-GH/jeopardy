@@ -28,3 +28,5 @@
 .player[data-state=waiting] .player-state{border-color:#88909a}.player[data-state=waiting] .buzz{background:#88909a;border-color:#616b77;box-shadow:0 8px 0 #59616c;cursor:not-allowed}.player[data-state=locked] .player-state{border-color:#1c8d61}.player[data-state=locked] .buzz{background:#248d64;border-color:#14744f;box-shadow:0 8px 0 #106643;cursor:not-allowed}
 @media(max-width:900px){.landing-main{grid-template-columns:1fr;padding:35px 22px;gap:30px}.intro h1{font-size:65px}.host-side{width:195px}.host-content{gap:11px;padding:10px}.tile.category{font-size:12px}.host-header{padding:0 12px}.host-header .title{font-size:18px}}
 @media(max-width:550px){.topbar{height:64px;padding:0 22px}.landing-main{min-height:auto}.intro h1{font-size:61px}.intro p{font-size:17px}.entry{padding:27px 23px}.create-line{align-items:flex-start;flex-direction:column}.player-head .brand small{display:none}}
+
+[hidden]{display:none!important}
