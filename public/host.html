@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c1020"><link rel="icon" href="data:,"><title>SLxCA Jeopardy - Host</title><link rel="stylesheet" href="/host.css"></head><body class="host">
+<header class="host-header"><div class="title"><b>SLxCA</b> JEOPARDY</div><div class="room-code" id="room-code"></div><div class="pill" id="pill"><span class="live-dot" id="pill-dot"></span><span id="pill-text">Connecting</span></div></header>
+<main class="host-content">
+<section class="board-area" aria-label="Jeopardy board"><div class="board-wrap"><div class="board" id="board"></div><div class="reveal" id="reveal" hidden><div class="kicker" id="reveal-kicker"></div><div class="clue" id="reveal-clue"></div><div class="buzzed" id="reveal-buzzed" hidden></div><div class="answer" id="reveal-answer" hidden><b>ANSWER</b><span id="reveal-answer-text"></span></div><div class="clock" id="reveal-clock" hidden></div></div></div>
+<footer class="host-foot"><div><strong>Round 1</strong> &nbsp; · &nbsp; <span id="clues-left"></span></div><div class="notice" id="notice"></div></footer></section>
+<aside class="host-side" aria-label="Game information">
+<section class="side-section"><h2>Scores</h2><div id="scores"></div></section>
+<section class="side-section"><h2>Buzzers</h2><div class="status"><span class="hint" id="status-hint"></span><strong id="status-main">&mdash;</strong><span class="hint" id="status-sub"></span><div class="clock" id="status-clock" hidden></div></div><div class="queue" id="queue"></div></section>
+<section class="side-section"><h2>Host controls</h2><button id="cmd-arm" disabled>Arm buzzers</button><button id="cmd-correct" disabled>&#10003; Correct</button><button id="cmd-wrong" disabled>&#10005; Wrong</button><button id="cmd-back" disabled>&larr; Back to board</button></section>
+</aside></main>
+<div class="gate" id="gate" hidden><form class="card" id="gate-form"><h1>Host board</h1><p>Open this page from your private host link, or enter the room details.</p><label for="gate-code">Room code</label><input id="gate-code" maxlength="8" minlength="8" autocomplete="off" placeholder="ABCDEFGH"><label for="gate-token">Host token</label><input id="gate-token" autocomplete="off" placeholder="From your host link"><button class="primary" type="submit">Open board</button><div class="err" id="gate-err"></div></form></div>
+<script type="module" src="/host.ts"></script></body></html>

@@ -7,7 +7,7 @@
     "dev": "wrangler dev",
     "build": "vite build",
     "deploy": "npm run build && wrangler deploy",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.public.json",
     "lint": "eslint .",
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm test"
@@ -16,6 +16,7 @@
     "@cloudflare/vitest-pool-workers": "^0.8.68",
     "@cloudflare/workers-types": "^5.20260925.2",
     "@eslint/js": "^9.36.0",
+    "@types/node": "^26.6.2",
     "eslint": "^9.36.0",
     "globals": "^16.4.0",
     "typescript": "^5.9.2",
