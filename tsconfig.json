@@ -1,0 +1,1 @@
+{"compilerOptions":{"target":"ES2022","lib":["ES2022","DOM"],"module":"ESNext","moduleResolution":"Bundler","strict":true,"noEmit":true,"types":["@cloudflare/workers-types","vite/client","@cloudflare/vitest-pool-workers"],"skipLibCheck":true,"noUncheckedIndexedAccess":true},"include":["src","test","vite.config.ts"]}
