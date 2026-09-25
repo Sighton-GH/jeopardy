@@ -114,7 +114,7 @@ function connect() {
         stopped = true;
         clearTimeout(retryTimer);
         showWaiting('Could not join', data.message, '');
-        message('Go back to join with a new name or code.');
+        message(data.code === 'phase' ? 'You can join once the current question ends.' : 'Go back to join with a new name or code.');
         ws.close();
         return;
       }
