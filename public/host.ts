@@ -1,4 +1,5 @@
 import type { HostCommand, PublicCell, RoomSettings, ServerMessage, Team, View } from '../src/protocol';
+import leaderMedalUrl from './brand/leader-medal.svg?url';
 
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const ADJUST_STEPS = [100, 500];
@@ -235,7 +236,7 @@ function renderScores() {
     if (index === 0) {
       const medal = document.createElement('img');
       medal.className = 'leader-medal';
-      medal.src = '/brand/leader-medal.svg';
+      medal.src = leaderMedalUrl;
       medal.alt = 'Leading team';
       name.append(medal);
     }
