@@ -260,3 +260,8 @@
 .host.slxca-theme .host-brand{gap:14px}
 @media(max-width:1100px){.host.slxca-theme .host-brand .network-mark{width:119px;height:48px}.host.slxca-theme .host-brand{gap:9px}}
 @media(max-width:700px){.host.slxca-theme .host-brand .network-mark{width:min(23vw,96px);height:39px}.host.slxca-theme .host-brand{gap:5px}.host.slxca-theme .host-wordmark{width:min(25vw,112px)}.host.slxca-theme .host-brand>span{font-size:clamp(11px,3vw,15px)}}
+
+/* Give the game title a deliberate display voice without changing either mark. */
+.host.slxca-theme .host-brand>span{font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;font-style:italic;letter-spacing:-.035em;line-height:1;color:#f9f7ee;text-shadow:0 2px 5px #061b3c88;white-space:nowrap}
+@media(max-width:1100px){.host.slxca-theme .host-brand>span{font-size:25px}}
+@media(max-width:700px){.host.slxca-theme .host-brand>span{font-size:clamp(18px,5vw,23px);letter-spacing:-.05em}}
