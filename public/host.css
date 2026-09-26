@@ -249,3 +249,17 @@
 .host.slxca-theme .host-brand .host-back:disabled{opacity:.58;color:#d0dfef;background:#143962;cursor:not-allowed}
 @media(max-width:1100px){.host.slxca-theme .host-brand .host-back{min-width:66px;font-size:12px}}
 @media(max-width:700px){.host.slxca-theme .host-brand{margin:0;padding-left:6px;gap:6px}.host.slxca-theme .host-brand .host-back{min-width:55px;min-height:36px;padding:6px 5px;font-size:11px}}
+
+/* School marks sit directly on the footer, without a shared chip or card. */
+.host.slxca-theme .host-schools{background:none;border:0;border-radius:0;padding:0;gap:13px}
+.host.slxca-theme .host-schools img{filter:drop-shadow(0 1px 2px #071e4599)}
+@media(max-width:700px){.host.slxca-theme .host-schools{background:none;padding:0;gap:10px;height:24px}}
+
+/* A single-colour event mark and requested logo order. */
+.host.slxca-theme .host-wordmark{content:url('/brand/slxca-wordmark-silhouette.webp')}
+.host.slxca-theme .host-brand .network-mark{display:block;width:156px;height:60px;flex:none;margin:0;object-fit:contain;filter:drop-shadow(0 3px 5px #00183d80)}
+.host.slxca-theme .host-brand{gap:14px}
+@media(max-width:1100px){.host.slxca-theme .host-brand .network-mark{width:119px;height:48px}.host.slxca-theme .host-brand{gap:9px}}
+@media(max-width:700px){.host.slxca-theme .host-brand .network-mark{width:min(23vw,96px);height:39px}.host.slxca-theme .host-brand{gap:5px}.host.slxca-theme .host-wordmark{width:min(25vw,112px)}.host.slxca-theme .host-brand>span{font-size:clamp(11px,3vw,15px)}}
+/* Dark original school marks need light ink when the backing ribbon is removed. */
+.host.slxca-theme .host-schools img:first-child,.host.slxca-theme .host-schools img:last-child{filter:brightness(0) invert(1) drop-shadow(0 1px 2px #071e4599)}
