@@ -229,3 +229,15 @@
 .host .reveal .clock{font-family:var(--board-letter);color:var(--board-gold)}
 @media(max-width:900px){.host .board .tile.category{font-size:clamp(11px,1.6vw,17px)}.host .board .tile.value{font-size:clamp(19px,2.8vw,35px)}}
 @media(max-width:700px){.host .board{gap:3px;border-width:4px}.host .board .tile{padding:2px}.host .board .tile.category{font-size:clamp(9px,2.7vw,15px);line-height:1.09;overflow-wrap:anywhere}.host .board .tile.value{font-size:clamp(15px,5vw,28px)}.host .reveal{border-width:4px}.host .reveal .kicker{font-size:clamp(12px,3.3vw,17px)}.host .reveal .clue{font-size:clamp(20px,5.5vw,34px);line-height:1.19;letter-spacing:.005em}}
+/* Icon-only settings control, with a full accessible name in the markup. */
+.host-header .settings-open{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;padding:7px;font-size:21px;line-height:1}
+@media(max-width:700px){.host-header .settings-open{min-width:36px;min-height:36px;font-size:19px}}
+
+/* Event marks share one lit identity rail instead of sitting as loose decals. */
+.host.slxca-theme .host-header{background:linear-gradient(110deg,#0d2a57 0%,#194579 48%,#153e74 100%);border-bottom:3px solid #d5aa54;box-shadow:0 5px 0 #0c2a51;gap:18px}
+.host.slxca-theme .host-brand{align-self:stretch;display:flex;align-items:center;gap:15px;padding:0 21px 0 15px;margin-left:-15px;background:linear-gradient(90deg,#23599790,#23599715);border-left:3px solid #f4bf53;border-right:1px solid #9bc2eb35}
+.host.slxca-theme .host-wordmark{width:180px;height:auto;max-height:76px;object-fit:contain;filter:drop-shadow(0 4px 5px #00194490)}
+.host.slxca-theme .host-brand>span{font-size:21px;font-weight:800;letter-spacing:-.025em;color:#fff;text-shadow:0 2px 4px #001a3f}
+.host.slxca-theme .network-mark{width:180px;height:72px;margin-right:auto;filter:drop-shadow(0 3px 5px #00183d80)}
+@media(max-width:1100px){.host.slxca-theme .host-header{gap:10px}.host.slxca-theme .host-brand{gap:9px;padding-right:10px}.host.slxca-theme .host-wordmark{width:130px}.host.slxca-theme .host-brand>span{font-size:17px}.host.slxca-theme .network-mark{width:130px;height:52px}}
+@media(max-width:700px){.host.slxca-theme .host-header{gap:6px 8px;padding-top:49px;padding-bottom:10px}.host.slxca-theme .host-brand{align-self:center;flex:1;min-width:0;margin:0;padding:5px 8px;border-right:0;gap:7px}.host.slxca-theme .host-wordmark{width:min(28vw,128px);max-height:43px}.host.slxca-theme .host-brand>span{font-size:clamp(13px,3.6vw,17px)}.host.slxca-theme .network-mark{width:min(27vw,114px);height:43px;flex:none;margin:0 3px 0 0}.host.slxca-theme .room-code{flex-basis:100%;margin-top:5px}}
