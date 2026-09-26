@@ -74,7 +74,7 @@
 .host{background:linear-gradient(145deg,#5114b7,#280a70);min-height:700px}
 .host-header{height:110px;background:#3b0e90;border:0;gap:24px;padding:12px 28px;box-shadow:0 5px 0 #1e095f66}
 .host-header .title{font-family:Arial,Helvetica,sans-serif;font-weight:1000;font-size:28px;letter-spacing:-.05em;white-space:nowrap}.host-header .title b{color:#ffffff}
-.room-code{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#fff;color:#2a1752;border-radius:14px;padding:8px 30px;min-width:310px;box-shadow:0 5px 0 #17074b;letter-spacing:0}
+.room-code{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#fff;color:#2a1752;border-radius:14px;padding:8px 30px;min-width:240px;margin-left:auto;box-shadow:0 5px 0 #17074b;letter-spacing:0}
 .join-label{font-size:13px;font-weight:800;letter-spacing:.01em}.join-code{font-size:34px;font-weight:1000;line-height:1;letter-spacing:.11em;color:#4214a3;font-variant-numeric:tabular-nums}
 .host-header .pill{border:0;background:#fff2;color:#fff;font-weight:900;border-radius:12px;padding:13px 15px;white-space:nowrap}.host-header .live-dot{width:10px;height:10px}
 .host-content{gap:16px;padding:22px}.board{border-radius:9px;overflow:hidden;border-width:7px;box-shadow:0 8px 0 #160b4e,0 18px 36px #1b0a5299}.tile.category{background:#233db2}.tile.value:hover{background:#3159d2}.reveal{border-radius:9px}
@@ -122,6 +122,10 @@
 .host-brand .host-wordmark,.host-brand>span,.host-partners{display:none}
 .host-brand .sighton-logo{width:52px;height:52px;display:block;object-fit:contain}
 .host-brand strong{font:900 23px Arial,Helvetica,sans-serif;letter-spacing:-.03em}
+.host-brand>span{font-size:34px}
+@media(max-width:1100px){.host-brand>span{font-size:28px}}
+@media(max-width:720px){.host-brand>span{font-size:24px}}
+@media(max-width:390px){.host-brand>span{font-size:20px}}
 .host.slxca-theme .host-brand .sighton-logo,.host.slxca-theme .host-brand strong{display:none}
 .host.slxca-theme .host-brand .host-wordmark,.host.slxca-theme .host-brand>span{display:block}
 .host.slxca-theme .host-partners{display:flex}

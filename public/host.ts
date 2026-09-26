@@ -35,7 +35,7 @@ function showGate(error: string) {
 }
 
 function connect() {
-  if (!/^[A-Z2-9]{8}$/.test(code) || !token) { showGate(''); return; }
+  if (!/^[0-9]{6}$/.test(code) || !token) { showGate(''); return; }
   el('gate').hidden = true;
   window.clearTimeout(reconnectTimer);
   socket?.close();
@@ -47,7 +47,7 @@ function connect() {
   joinLabel.textContent = `Join at ${location.host}`;
   const codeValue = document.createElement('strong');
   codeValue.className = 'join-code';
-  codeValue.textContent = `${code.slice(0, 4)} ${code.slice(4)}`;
+  codeValue.textContent = `${code.slice(0, 3)} ${code.slice(3)}`;
   roomCode.replaceChildren(joinLabel, codeValue);
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
   const params = new URLSearchParams({ role: 'host', token });
@@ -79,7 +79,7 @@ el<HTMLFormElement>('gate-form').onsubmit = event => {
   event.preventDefault();
   code = el<HTMLInputElement>('gate-code').value.trim().toUpperCase();
   token = el<HTMLInputElement>('gate-token').value.trim();
-  if (!/^[A-Z2-9]{8}$/.test(code) || !token) { el('gate-err').textContent = 'Enter the 8-letter room code and host token.'; return; }
+  if (!/^[0-9]{6}$/.test(code) || !token) { el('gate-err').textContent = 'Enter the 6-digit room code and host token.'; return; }
   history.replaceState(null, '', location.pathname);
   sessionStorage.setItem('host:last', JSON.stringify({ code, token }));
   retries = 0;

@@ -9,7 +9,7 @@ describe('HTTP routes', () => {
     const first = await worker.fetch(request(), env as Env);
     expect(first.status).toBe(201);
     const created = await first.json() as { code: string; hostUrl: string };
-    expect(created.code).toMatch(/^[A-Z2-9]{8}$/);
+    expect(created.code).toMatch(/^[0-9]{6}$/);
     expect(new URL(created.hostUrl).pathname).toBe('/host.html');
     expect(new URL(created.hostUrl).searchParams.get('host')).toBe(created.code);
     expect(new URL(created.hostUrl).searchParams.get('token')?.length).toBeGreaterThan(32);
