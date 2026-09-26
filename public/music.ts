@@ -37,6 +37,7 @@ thinking.volume = .2;
 buzz.volume = .48;
 reveal.volume = .42;
 let enabled = false;
+let manuallyToggled = false;
 let theme: View['theme'] | undefined;
 const clueTrack = () => theme === 'slxca-2026' ? realTheme : thinking;
 // Start the selected track inside the trusted click before the server acknowledges the clue.
@@ -62,6 +63,7 @@ function stop(audio: HTMLAudioElement) { audio.pause(); audio.currentTime = 0; }
 export function makeMusicToggle(button: HTMLButtonElement) {
   button.onclick = () => {
     enabled = !enabled;
+    manuallyToggled = true;
     button.textContent = enabled ? 'Sound on' : 'Sound off';
     button.setAttribute('aria-pressed', String(enabled));
     if (!enabled) { for (const track of [lobby, thinking, realTheme, buzz, reveal]) stop(track); return; }
@@ -77,7 +79,7 @@ export function syncMusic(view: View) {
   const previousCell = lastCell;
   lastVersion = view.version;
   theme = view.theme;
-  if (previousPhase === undefined && theme === 'slxca-2026') { enabled = true; const button = document.getElementById('sound-toggle'); if (button) { button.textContent = 'Sound on'; button.setAttribute('aria-pressed', 'true'); } }
+  if (theme === 'slxca-2026' && !manuallyToggled && !enabled) { enabled = true; const button = document.getElementById('sound-toggle'); if (button) { button.textContent = 'Sound on'; button.setAttribute('aria-pressed', 'true'); } }
   lastPhase = view.phase;
   lastBuzzer = view.buzzQueue[0];
   lastCell = view.selectedCellId;

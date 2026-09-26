@@ -1,5 +1,5 @@
 # Audio source notes
 
-`jeopardy-main-modern.mp3` is the archived 2021-present Jeopardy main-theme remix from [Jeopardy! Theme Song Remix 2021 Present](https://archive.org/details/jeopardy-theme-song-remix-2021-present-cleanest-version), and `jeopardy-main-modern.ogg` is a format conversion of that MP3. This is a modern arrangement of the main theme, not the exact Geek Music recording linked by the event organizer at https://www.youtube.com/watch?v=afz8WmqAUM4. It is intended for the private SLxCA event; the repo and its Cloudflare assets may be publicly accessible. Replace the asset before any use that requires rights beyond this event.
+`jeopardy-main-modern.mp3` is the 127-second MP3 supplied directly by Connor for the SLxCA game on September 26, 2026. `jeopardy-main-modern.ogg` is its Vorbis conversion. It plays on the host during a clue and stops on closing the clue; the Sighton/default theme retains its original cues. The source recording's independent rights status was not established. The repo and Cloudflare assets may be publicly accessible; obtain rights before use that requires them.
 
 `showtime-theme`, `thinking-pulse`, `buzz-in`, and `answer-reveal` are original synthesized compositions created for the game. They are used only by the Sighton/default theme.
