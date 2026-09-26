@@ -1,5 +1,6 @@
 import type { HostCommand, PublicCell, RoomSettings, ServerMessage, Team, View } from '../src/protocol';
 import leaderMedalUrl from './brand/leader-medal.svg?url';
+import { makeMusicToggle, syncMusic } from './music';
 
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const ADJUST_STEPS = [100, 500];
@@ -65,6 +66,7 @@ function connect() {
     document.body.classList.toggle('slxca-theme', state.theme === 'slxca-2026');
     document.title = state.theme === 'slxca-2026' ? 'SLxCA Jeopardy - Host' : 'Sighton Jeopardy - Host';
     document.querySelector<HTMLLinkElement>('link[rel="icon"]')?.setAttribute('href', state.theme === 'slxca-2026' ? '/brand/slxca-26.webp' : '/brand/sighton-logo.svg');
+    syncMusic(state);
     render();
   };
   socket.onclose = event => {
@@ -319,6 +321,8 @@ function renderControls() {
     button.disabled = !show;
   }
 }
+
+makeMusicToggle(el<HTMLButtonElement>('sound-toggle'));
 
 el<HTMLButtonElement>('cmd-arm').onclick = () => send({ type: 'arm_buzzers' });
 el<HTMLButtonElement>('cmd-correct').onclick = () => { const teamId = state?.buzzQueue[0]; if (teamId) send({ type: 'correct', teamId }); };
