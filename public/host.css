@@ -83,7 +83,7 @@
 @media(max-width:900px){.host-header{height:92px;padding:10px}.host-header .title{font-size:19px}.room-code{min-width:220px;padding:6px 12px}.join-code{font-size:26px}.join-label{font-size:11px}.host-side{width:210px}.host-content{gap:10px;padding:12px}.side-section{padding:10px}.score{flex-wrap:wrap}.score .adj{order:3;width:100%}}
 
 /* Keep names legible alongside four adjustment controls, even with long team names. */
-.host-side{width:310px;overflow-y:auto;scrollbar-width:thin}.score{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:10px 0}.score>span:first-child{white-space:normal;overflow-wrap:anywhere;overflow:visible;font-weight:800;min-width:0}.score .adj{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;grid-column:1/-1;grid-row:2}.score .adj button{padding:4px 2px;min-width:0;box-shadow:none}.score strong{grid-column:2;grid-row:1;text-align:right}
+.host-side{width:310px;overflow-y:auto;scrollbar-width:thin}.score{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:10px 0;align-items:center}.score>span:first-child{display:flex;align-items:center;gap:8px;white-space:normal;overflow-wrap:anywhere;overflow:visible;font-weight:800;min-width:0}.score .adj{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;grid-column:1/-1;grid-row:2}.score .adj button{padding:4px 2px;min-width:0;box-shadow:none}.score strong{grid-column:2;grid-row:1;text-align:right;white-space:nowrap}
 @media(max-width:900px){.host-side{width:245px}.score .adj{width:auto}}
 
 .complete-board{background:linear-gradient(135deg,#251178,#5414bf);overflow-y:auto;align-items:flex-start!important}.final-standings{width:min(680px,92%);margin:auto;padding:20px;color:#fff}.final-standings h1{text-align:center;font:900 clamp(32px,4vw,58px) Arial,sans-serif;margin:0 0 24px}.final-team{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 22px;margin:8px 0;border-radius:12px;background:#fff;color:#31116c;font-size:clamp(17px,2vw,25px);font-weight:900;text-shadow:none}.final-team:first-of-type{background:#ffffff}.final-team strong{white-space:nowrap}.score .readmit{grid-column:1/-1;grid-row:3;background:#f4b128;color:#1c1430;box-shadow:none;padding:5px 8px;font-size:12px;text-align:center}
@@ -141,7 +141,7 @@
 .host-schools img:first-child{width:38px}
 .host-schools img:nth-child(2){width:52px}
 .host.slxca-theme .host-wordmark{background:none;border-radius:0;padding:0}
-.score .leader-medal{display:inline-block;width:19px;height:22px;object-fit:contain;margin-right:8px;vertical-align:-5px}
+.score .leader-medal{display:inline-block;width:19px;height:22px;object-fit:contain;flex:none;margin:0}
 @media(max-width:720px){.host.slxca-theme .network-mark{width:85px;height:35px;margin-right:0}.host-foot-left{flex-wrap:wrap;gap:5px}.host.slxca-theme .host-schools{width:100%;gap:12px}.host-schools img{height:26px;width:50px}.host-schools img:first-child{width:26px}.host-schools img:nth-child(2){width:43px}.host.slxca-theme .host-foot{min-height:66px}}
 .host-foot{overflow:visible}
 .host.slxca-theme .host-foot-left{gap:10px}
