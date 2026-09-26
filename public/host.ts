@@ -148,7 +148,8 @@ function renderBoard() {
   for (const category of categories) {
     const tile = document.createElement('div');
     tile.className = 'tile category';
-    tile.textContent = category.name;
+    // Zero-width space after slashes gives long names a clean wrap point.
+    tile.textContent = category.name.replaceAll('/', '/\u200b');
     board.append(tile);
   }
   let remaining = 0;
