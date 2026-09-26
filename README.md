@@ -1,6 +1,6 @@
 # Jeopardy foundation
 
-Cloudflare Worker with static assets and one SQLite-backed Durable Object per 8-character game code. No accounts. Each room saves its board, scores, team and host tokens, queue, and deadlines in Durable Object storage; a Worker/DO restart or idle eviction closes live sockets, but clients can reconnect to the saved room. Create a room by uploading a CSV or XLSX board at `/create`, then share the eight-character code with up to 10 teams. The host board and phone buzzer update through WebSockets.
+Cloudflare Worker with static assets and one SQLite-backed Durable Object per 6-digit game code. No accounts. Each room saves its board, scores, team and host tokens, queue, and deadlines in Durable Object storage; a Worker/DO restart or idle eviction closes live sockets, but clients can reconnect to the saved room. Create a room by uploading a CSV or XLSX board at `/create`, then share the six-digit code with up to 10 teams. The host board and phone buzzer update through WebSockets.
 
 ## Run
 

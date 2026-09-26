@@ -21,7 +21,7 @@ let stopped = false;
 let terminalError = '';
 let everWelcomed = false;
 
-node('room-code').textContent = code ? code.replace(/(.{4})/, '$1 ') : 'ROOM';
+node('room-code').textContent = code ? code.replace(/(.{3})/, '$1 ') : 'ROOM';
 node('team-name').textContent = name || 'Your team';
 
 function message(text: string) { note.textContent = text; note.hidden = !text; }
@@ -167,14 +167,14 @@ button.addEventListener('click', () => {
 });
 window.addEventListener('pagehide', () => { stopped = true; clearTimeout(retryTimer); socket?.close(); });
 window.addEventListener('pageshow', event => {
-  if (event.persisted && !terminalError && /^[A-Z2-9]{8}$/.test(code) && name) {
+  if (event.persisted && !terminalError && /^[0-9]{6}$/.test(code) && name) {
     stopped = false;
     retryCount = 0;
     connect();
   }
 });
 setInterval(() => { if (latest?.phase === 'buzzed' && latest.buzzQueue[0] === teamId) render(latest); }, 250);
-if (!/^[A-Z2-9]{8}$/.test(code) || !name || name.length > 30) {
+if (!/^[0-9]{6}$/.test(code) || !name || name.length > 30) {
   stopped = true;
   showWaiting('Missing game details', 'Check the room code and team name.');
   message('No game was joined.');
