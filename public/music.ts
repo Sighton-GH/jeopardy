@@ -1,25 +1,53 @@
 import type { View } from '../src/protocol';
+import realThemeMp3 from './audio/jeopardy-main-classic.mp3?url';
+import realThemeOgg from './audio/jeopardy-main-classic.ogg?url';
+import showtimethemeMp3 from './audio/showtime-theme.mp3?url';
+import showtimethemeOgg from './audio/showtime-theme.ogg?url';
+import thinkingpulseMp3 from './audio/thinking-pulse.mp3?url';
+import thinkingpulseOgg from './audio/thinking-pulse.ogg?url';
+import buzzinMp3 from './audio/buzz-in.mp3?url';
+import buzzinOgg from './audio/buzz-in.ogg?url';
+import answerrevealMp3 from './audio/answer-reveal.mp3?url';
+import answerrevealOgg from './audio/answer-reveal.ogg?url';
 
 // Audio is host-side only. The projector can carry the music; each player's phone stays silent.
 type Cue = 'showtime-theme' | 'thinking-pulse' | 'buzz-in' | 'answer-reveal';
+const sources = {
+  'showtime-theme': { mp3: showtimethemeMp3, ogg: showtimethemeOgg },
+  'thinking-pulse': { mp3: thinkingpulseMp3, ogg: thinkingpulseOgg },
+  'buzz-in': { mp3: buzzinMp3, ogg: buzzinOgg },
+  'answer-reveal': { mp3: answerrevealMp3, ogg: answerrevealOgg },
+};
 const source = (name: Cue) => {
   const audio = new Audio();
-  const probe = document.createElement('audio');
-  audio.src = `/audio/${name}.${probe.canPlayType('audio/ogg; codecs="vorbis"') ? 'ogg' : 'mp3'}`;
+  audio.src = document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis"') ? sources[name].ogg : sources[name].mp3;
   audio.preload = 'auto';
   return audio;
 };
-const theme = source('showtime-theme');
+const lobby = source('showtime-theme');
 const thinking = source('thinking-pulse');
+const realTheme = new Audio(document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis"') ? realThemeOgg : realThemeMp3);
+realTheme.loop = true; realTheme.volume = .35; realTheme.preload = 'auto';
 const buzz = source('buzz-in');
 const reveal = source('answer-reveal');
-theme.loop = true;
+lobby.loop = true;
 thinking.loop = true;
-theme.volume = .28;
+lobby.volume = .28;
 thinking.volume = .2;
 buzz.volume = .48;
 reveal.volume = .42;
 let enabled = false;
+let theme: View['theme'] | undefined;
+const clueTrack = () => theme === 'slxca-2026' ? realTheme : thinking;
+// Start the selected track inside the trusted click before the server acknowledges the clue.
+export function prepareClueAudio() {
+  if (lastPhase !== 'board') return;
+  // A host's clue click is a browser audio gesture. Sound starts by default for SLxCA, unless switched off.
+  if (!enabled) return;
+  stop(lobby);
+  stop(thinking); stop(realTheme);
+  play(clueTrack());
+}
 let lastVersion = -1;
 let lastPhase: View['phase'] | undefined;
 let lastBuzzer: string | undefined;
@@ -36,9 +64,9 @@ export function makeMusicToggle(button: HTMLButtonElement) {
     enabled = !enabled;
     button.textContent = enabled ? 'Sound on' : 'Sound off';
     button.setAttribute('aria-pressed', String(enabled));
-    if (!enabled) { for (const track of [theme, thinking, buzz, reveal]) stop(track); return; }
-    if (lastPhase === 'lobby' || lastPhase === 'board') play(theme);
-    if (lastPhase === 'question-showing' || lastPhase === 'buzz-open') play(thinking);
+    if (!enabled) { for (const track of [lobby, thinking, realTheme, buzz, reveal]) stop(track); return; }
+    if ((lastPhase === 'lobby' || lastPhase === 'board') && theme !== 'slxca-2026') play(lobby);
+    if (lastCell && lastPhase !== 'board' && lastPhase !== 'complete') play(clueTrack());
   };
 }
 
@@ -48,19 +76,22 @@ export function syncMusic(view: View) {
   const previousBuzzer = lastBuzzer;
   const previousCell = lastCell;
   lastVersion = view.version;
+  theme = view.theme;
+  if (previousPhase === undefined && theme === 'slxca-2026') { enabled = true; const button = document.getElementById('sound-toggle'); if (button) { button.textContent = 'Sound on'; button.setAttribute('aria-pressed', 'true'); } }
   lastPhase = view.phase;
   lastBuzzer = view.buzzQueue[0];
   lastCell = view.selectedCellId;
   // On first socket snapshot (including reconnect), align loops but don't fire stingers.
   if (view.phase === 'lobby' || view.phase === 'board') {
-    stop(thinking);
-    if (enabled && theme.paused) play(theme);
-  } else if (view.phase === 'question-showing' || view.phase === 'buzz-open') {
-    stop(theme);
-    if (previousCell !== view.selectedCellId) stop(thinking);
-    if (enabled && thinking.paused) play(thinking);
-  } else { stop(theme); stop(thinking); }
+    stop(thinking); stop(realTheme);
+    if (enabled && theme !== 'slxca-2026' && lobby.paused) play(lobby);
+  } else if (view.selectedCellId && view.phase !== 'complete') {
+    stop(lobby);
+    if (previousCell !== view.selectedCellId) { stop(thinking); stop(realTheme); }
+    const selected = clueTrack();
+    if (enabled && selected.paused) play(selected);
+  } else { stop(lobby); stop(thinking); stop(realTheme); }
   if (previousPhase === undefined || !enabled) return;
-  if (view.phase === 'buzzed' && view.buzzQueue[0] && (previousPhase !== 'buzzed' || previousBuzzer !== view.buzzQueue[0])) play(buzz, true);
-  if (view.phase === 'resolving' && previousPhase !== 'resolving') play(reveal, true);
+  if (theme !== 'slxca-2026' && view.phase === 'buzzed' && view.buzzQueue[0] && (previousPhase !== 'buzzed' || previousBuzzer !== view.buzzQueue[0])) play(buzz, true);
+  if (theme !== 'slxca-2026' && view.phase === 'resolving' && previousPhase !== 'resolving') play(reveal, true);
 }

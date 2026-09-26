@@ -1,6 +1,6 @@
 import type { HostCommand, PublicCell, RoomSettings, ServerMessage, Team, View } from '../src/protocol';
 import leaderMedalUrl from './brand/leader-medal.svg?url';
-import { makeMusicToggle, syncMusic } from './music';
+import { makeMusicToggle, prepareClueAudio, syncMusic } from './music';
 
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const ADJUST_STEPS = [100, 500];
@@ -163,7 +163,7 @@ function renderBoard() {
       tile.textContent = cell.revealed ? '' : `$${cell.value.toLocaleString()}`;
       tile.setAttribute('aria-label', `${category.name} for $${cell.value.toLocaleString()}`);
       tile.disabled = cell.revealed || state.phase !== 'board';
-      tile.onclick = () => send({ type: 'pick_cell', cellId: cell.id });
+      tile.onclick = () => { prepareClueAudio(); send({ type: 'pick_cell', cellId: cell.id }); };
       board.append(tile);
     }
   }
