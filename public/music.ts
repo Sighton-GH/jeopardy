@@ -1,6 +1,6 @@
 import type { View } from '../src/protocol';
-import realThemeMp3 from './audio/jeopardy-main-classic.mp3?url';
-import realThemeOgg from './audio/jeopardy-main-classic.ogg?url';
+import realThemeMp3 from './audio/jeopardy-main-modern.mp3?url';
+import realThemeOgg from './audio/jeopardy-main-modern.ogg?url';
 import showtimethemeMp3 from './audio/showtime-theme.mp3?url';
 import showtimethemeOgg from './audio/showtime-theme.ogg?url';
 import thinkingpulseMp3 from './audio/thinking-pulse.mp3?url';
