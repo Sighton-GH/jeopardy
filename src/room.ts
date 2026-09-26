@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import { addTeam, buzz, GameError, hostCommand, initialState, timeout, view, type GameState } from './state';
+import { addTeam, buzz, GameError, hostCommand, initialState, timeout, readingTimeout, view, type GameState } from './state';
 import type { ClientMessage, ServerMessage } from './protocol';
 import type { Env } from './worker';
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
@@ -34,6 +34,7 @@ export class Room extends DurableObject<Env> {
       if (!this.expired && this.createdAt !== null && Date.now() >= this.createdAt + ROOM_TTL_MS) await this.expire();
       else {
         if (this.game.buzzerDeadline !== null) timeout(this.game, Date.now());
+        if (this.game.readingDeadline != null) readingTimeout(this.game, Date.now());
         await this.save();
       }
     });
@@ -44,7 +45,7 @@ export class Room extends DurableObject<Env> {
       expired: this.expired, tokens: [...this.tokens], pendingReadmission: [...this.pendingReadmission],
     };
     await this.ctx.storage.put('room', snapshot);
-    const next = this.expired || this.createdAt === null ? null : Math.min(this.createdAt + ROOM_TTL_MS, this.game.buzzerDeadline ?? Infinity);
+    const next = this.expired || this.createdAt === null ? null : Math.min(this.createdAt + ROOM_TTL_MS, this.game.buzzerDeadline ?? Infinity, this.game.readingDeadline ?? Infinity);
     if (next !== null) await this.ctx.storage.setAlarm(Math.max(Date.now() + 1, next));
     else if (await this.ctx.storage.getAlarm() !== null) await this.ctx.storage.deleteAlarm();
   }
@@ -60,7 +61,7 @@ export class Room extends DurableObject<Env> {
   async alarm() {
     await this.ready();
     if (this.createdAt !== null && Date.now() >= this.createdAt + ROOM_TTL_MS) { await this.expire(); return; }
-    const advanced = timeout(this.game, Date.now());
+    const advanced = timeout(this.game, Date.now()) || readingTimeout(this.game, Date.now());
     await this.save();
     if (advanced) this.broadcast();
   }
@@ -146,7 +147,7 @@ export class Room extends DurableObject<Env> {
     this.hostToken = null;
     this.tokens.clear();
     this.pendingReadmission.clear();
-    this.game.buzzerDeadline = null;
+    this.game.buzzerDeadline = null; this.game.readingDeadline = null; this.game.readingDuration = null;
     await this.save();
     for (const ws of this.sessions.keys()) {
       this.send(ws, { type: 'error', code: 'expired', message: 'Room expired. Create a new game.' });
@@ -176,8 +177,8 @@ export class Room extends DurableObject<Env> {
       if (data.length > 100000) throw new GameError('size', 'Board or message is too large (100 KB maximum).');
       // A delayed timer callback must not make an expired answer window actionable.
       // Settle the deadline before accepting a buzz or an adjudication.
-      if (this.game.buzzerDeadline !== null && Date.now() >= this.game.buzzerDeadline) {
-        if (timeout(this.game, Date.now())) { await this.save(); this.broadcast(); }
+      if ((this.game.buzzerDeadline !== null && Date.now() >= this.game.buzzerDeadline) || (this.game.readingDeadline != null && Date.now() >= this.game.readingDeadline)) {
+        if (timeout(this.game, Date.now()) || readingTimeout(this.game, Date.now())) { await this.save(); this.broadcast(); }
       }
       const msg = JSON.parse(data) as ClientMessage;
       if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') throw new GameError('message', 'Invalid message');

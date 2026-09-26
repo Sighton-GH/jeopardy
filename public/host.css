@@ -202,3 +202,12 @@
 
 /* The persistent header Back is never displaced on narrow screens. */
 @media(max-width:700px){.host-header{position:relative}.host-header .host-back{z-index:3}.host-brand{margin-top:0}}
+
+.host-header .settings-open{appearance:none;flex:none;border:1px solid #a8c6e7;color:#fff;background:#ffffff22;border-radius:7px;font:800 13px Arial,sans-serif;padding:9px 12px;cursor:pointer}
+.host-header .settings-open:hover{background:#ffffff45}
+.settings-dialog{border:0;border-radius:14px;padding:25px;width:min(420px,calc(100vw - 30px));color:#183c6c;background:#fff;box-shadow:0 15px 50px #0008}
+.settings-dialog::backdrop{background:#061b47a8}
+.settings-dialog h2{margin:0 0 16px}.settings-dialog label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-weight:700}.settings-dialog input[type=number]{width:90px;padding:8px;border:1px solid #a5bdd6;border-radius:6px}.settings-dialog .check{justify-content:flex-start}.settings-dialog p{font-size:12px;color:#566981}.settings-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:20px}.settings-actions button{padding:9px;border:0;border-radius:6px;background:#1f5593;color:#fff;cursor:pointer;font-weight:700}.settings-actions #end-game{margin-right:auto;background:#9e2439}
+.reveal .reading-bar{position:absolute;left:20px;right:20px;bottom:80px;height:9px;border-radius:6px;background:#ffffff47;overflow:hidden}.reveal .reading-bar[hidden]{display:none}.reveal .reading-bar span{display:block;height:100%;background:#fff;transition:width .2s linear}
+.final-standings .winner{text-align:center;font:800 clamp(19px,2.5vw,31px) Arial,sans-serif}.final-standings .new-game{display:block;margin:18px auto 0;padding:12px 16px;width:max-content;background:#fff;color:#174776;border-radius:8px;text-decoration:none;font-weight:800}
+@media(max-width:700px){.host-header .settings-open{position:absolute;right:10px;top:12px;z-index:3;min-height:34px;padding:5px 8px;font-size:11px}.reveal .reading-bar{bottom:68px;left:10px;right:10px}}

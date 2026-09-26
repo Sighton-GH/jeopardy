@@ -1,4 +1,4 @@
-import type { HostCommand, PublicCell, ServerMessage, Team, View } from '../src/protocol';
+import type { HostCommand, PublicCell, RoomSettings, ServerMessage, Team, View } from '../src/protocol';
 
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const ADJUST_STEPS = [100, 500];
@@ -112,13 +112,16 @@ function renderBoard() {
     document.body.classList.add('game-complete');
     const wrap = document.createElement('div');
     wrap.className = 'final-standings';
-    const heading = document.createElement('h1'); heading.textContent = 'Game over'; wrap.append(heading);
+    const heading = document.createElement('h1'); heading.textContent = '🏆 Final standings'; wrap.append(heading);
+    const winner = [...state.teams].sort((a,b) => b.score - a.score)[0];
+    if (winner) { const champ = document.createElement('h2'); champ.className = 'winner'; champ.textContent = `Congratulations, ${winner.name}!`; wrap.append(champ); }
     for (const [index, team] of [...state.teams].sort((a, b) => b.score - a.score).entries()) {
       const row = document.createElement('div'); row.className = 'final-team';
       const name = document.createElement('span'); name.textContent = `${index + 1}. ${team.name}`;
       const score = document.createElement('strong'); score.textContent = team.score.toLocaleString();
       row.append(name, score); wrap.append(row);
     }
+    const again = document.createElement('a'); again.href = '/'; again.className = 'new-game'; again.textContent = 'Create a new game'; wrap.append(again);
     board.replaceChildren(wrap);
     el('clues-left').textContent = 'Final standings';
     return;
@@ -322,10 +325,47 @@ el<HTMLButtonElement>('cmd-wrong').onclick = () => { const teamId = state?.buzzQ
 el<HTMLButtonElement>('cmd-back').onclick = () => send({ type: 'back_to_board' });
 el<HTMLButtonElement>('cmd-resolved-back').onclick = () => send({ type: 'back_to_board' });
 
+const settingsDialog = el<HTMLDialogElement>('settings-dialog');
+el<HTMLButtonElement>('settings-open').onclick = () => {
+  if (!state) return;
+  el<HTMLInputElement>('set-max').value = String(state.settings.maxPlayers);
+  el<HTMLInputElement>('set-max').min = String(Math.max(1, state.teams.length));
+  el<HTMLInputElement>('set-answer').value = String(state.settings.answerSeconds);
+  el<HTMLInputElement>('set-auto').checked = state.settings.autoReading;
+  el<HTMLInputElement>('set-reading').value = String(state.settings.readingSecondsPerWord);
+  settingsDialog.showModal();
+  el<HTMLButtonElement>('settings-open').setAttribute('aria-expanded', 'true');
+};
+settingsDialog.onclose = () => el<HTMLButtonElement>('settings-open').setAttribute('aria-expanded', 'false');
+el<HTMLButtonElement>('settings-close').onclick = () => settingsDialog.close();
+el<HTMLFormElement>('settings-form').onsubmit = event => {
+  event.preventDefault();
+  const settings: RoomSettings = {
+    maxPlayers: Number(el<HTMLInputElement>('set-max').value),
+    answerSeconds: Number(el<HTMLInputElement>('set-answer').value),
+    autoReading: el<HTMLInputElement>('set-auto').checked,
+    readingSecondsPerWord: Number(el<HTMLInputElement>('set-reading').value),
+  };
+  send({ type: 'update_settings', settings });
+  settingsDialog.close();
+};
+el<HTMLButtonElement>('end-game').onclick = () => {
+  if (!state || state.phase === 'complete' || state.phase === 'lobby') return;
+  if (window.confirm('End this game for everyone and show final standings? This cannot be undone.')) {
+    send({ type: 'end_game' }); settingsDialog.close();
+  }
+};
 function tick() {
   const deadline = state?.buzzerDeadline;
   const show = typeof deadline === 'number';
   const text = show ? `00:${String(Math.max(0, Math.ceil(((deadline as number) - Date.now()) / 1000))).padStart(2, '0')}` : '';
+  const reading = state?.phase === 'question-showing' && state.readingDeadline != null && state.readingDuration != null;
+  const bar = el('reading-bar'); bar.hidden = !reading;
+  if (reading && state?.readingDeadline && state.readingDuration) {
+    const remaining = Math.max(0, state.readingDeadline - Date.now());
+    el('reading-fill').style.width = `${Math.min(100, 100 * remaining / (state.readingDuration * 1000))}%`;
+    bar.setAttribute('aria-valuenow', String(Math.round(100 * remaining / (state.readingDuration * 1000))));
+  }
   for (const id of ['reveal-clock', 'status-clock']) {
     const clock = el(id);
     clock.hidden = !show;

@@ -6,12 +6,15 @@ export interface Team { id: string; name: string; score: number; connected: bool
 export interface PublicCell extends Omit<Cell, 'answer' | 'question'> { question?: string; answer?: string }
 export interface PublicCategory extends Omit<Category, 'cells'> { cells: PublicCell[] }
 export type GameTheme = 'sighton' | 'slxca-2026';
-export interface View { theme: GameTheme; phase: Phase; teams: Team[]; board: PublicCategory[]; selectedCellId: string | null; buzzQueue: string[]; lockedOut: string[]; buzzerDeadline: number | null; hostConnected: boolean; version: number }
+export interface RoomSettings { maxPlayers: number; answerSeconds: number; autoReading: boolean; readingSecondsPerWord: number }
+export interface View { settings: RoomSettings; readingDeadline: number | null; readingDuration: number | null; theme: GameTheme; phase: Phase; teams: Team[]; board: PublicCategory[]; selectedCellId: string | null; buzzQueue: string[]; lockedOut: string[]; buzzerDeadline: number | null; hostConnected: boolean; version: number }
 export interface BoardInput { theme?: GameTheme; categories: Array<{ id: string; name: string; cells: Array<{ id: string; question: string; answer: string; value: number; dailyDouble: boolean }> }> }
 export type HostCommand =
   | { type: 'load_board'; board: BoardInput }
   | { type: 'pick_cell'; cellId: string }
   | { type: 'arm_buzzers' }
+  | { type: 'update_settings'; settings: RoomSettings }
+  | { type: 'end_game' }
   | { type: 'correct'; teamId: string }
   | { type: 'wrong'; teamId: string }
   | { type: 'back_to_board' }

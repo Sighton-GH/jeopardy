@@ -69,3 +69,32 @@ describe('room theme', () => {
     expect(view(game, false).theme).toBe('sighton');
   });
 });
+
+describe('room settings and end game', () => {
+  it('caps players and scales reading timer, then opens buzzers on expiry', async () => {
+    const { readingTimeout } = await import('../src/state');
+    const s = initialState();
+    hostCommand(s, { type: 'update_settings', settings: { maxPlayers: 2, answerSeconds: 20, autoReading: true, readingSecondsPerWord: 1 } }, 0);
+    addTeam(s, 'a', 'Alpha'); addTeam(s, 'b', 'Beta');
+    expect(() => addTeam(s, 'c', 'Gamma')).toThrow('Room is full');
+    hostCommand(s, { type: 'load_board', board }, 0);
+    hostCommand(s, { type: 'pick_cell', cellId: 'q1' }, 1000);
+    expect(s.readingDuration).toBe(5);
+    expect(s.readingDeadline).toBe(6000);
+    expect(readingTimeout(s, 5999)).toBe(false);
+    expect(readingTimeout(s, 6000)).toBe(true);
+    expect(s.phase).toBe('buzz-open');
+    buzz(s, 'a', 7000); expect(s.buzzerDeadline).toBe(27000);
+    expect(() => hostCommand(s, { type: 'update_settings', settings: { maxPlayers: 1, answerSeconds: 20, autoReading: false, readingSecondsPerWord: 1 } }, 7000)).toThrow();
+  });
+  it('supports manual reading and explicit end game without further actions', () => {
+    const s = initialState();
+    hostCommand(s, { type: 'update_settings', settings: { maxPlayers: 10, answerSeconds: 15, autoReading: false, readingSecondsPerWord: 0.45 } }, 0);
+    hostCommand(s, { type: 'load_board', board }, 0); hostCommand(s, { type: 'pick_cell', cellId: 'q1' }, 0);
+    expect(s.readingDeadline).toBeNull();
+    hostCommand(s, { type: 'end_game' }, 1);
+    expect(s.phase).toBe('complete');
+    expect(s.selectedCellId).toBeNull();
+    expect(() => hostCommand(s, { type: 'pick_cell', cellId: 'q1' }, 2)).toThrow();
+  });
+});
