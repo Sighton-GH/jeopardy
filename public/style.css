@@ -35,3 +35,4 @@
 .landing .sighton-credit{font-size:15px;color:#e1ecf8}
 .landing .sighton-credit a{color:#fff;text-underline-offset:3px}
 @media(max-width:550px){.landing .brand .sighton-logo{width:32px;height:34px}.landing .brand span{font-size:15px}}
+.landing .brand .slxca-wordmark,.intro .event-logo,.event-partners img{background:none;border-radius:0;padding:0}

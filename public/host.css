@@ -20,7 +20,7 @@
 .landing{min-height:100vh;background:var(--stage)}.landing-main{max-width:1320px;padding:64px 56px 60px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:7vw;align-items:center;min-height:calc(100vh - 74px)}.intro h1{font-family:var(--font-display);font-size:clamp(64px,7vw,112px);font-weight:900;line-height:.94;letter-spacing:-.065em;margin:28px 0}.intro h1 span{display:block;color:var(--board-gold)}.intro p{font-size:20px;line-height:1.5;max-width:520px;color:#bfc4d2}.intro .event{font-size:13px;letter-spacing:.17em;text-transform:uppercase;color:var(--board-gold);font-weight:800}
 .entry{border-top:5px solid var(--accent);background:#151b30;padding:36px 40px 38px;box-shadow:0 18px 60px #0003}.entry h2{font-size:31px;margin:0 0 7px}.entry p{color:#bfc4d2;margin:0 0 30px;line-height:1.45}.entry label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin:18px 0 8px;color:#bfc4d2}.entry input{height:56px;padding:0 18px;width:100%;border:2px solid #6e7791;background:#fff;color:var(--ink);border-radius:4px;font-size:19px}.entry input::placeholder{color:#717a8b}.primary{background:var(--board-gold);color:#141622;border:0;border-radius:4px;padding:17px 22px;font-weight:900;font-size:18px;min-height:56px}.entry .primary{width:100%;margin-top:28px}.create-line{border-top:1px solid #525a73;margin-top:32px;padding-top:23px;display:flex;align-items:center;justify-content:space-between;gap:12px}.create-line span{font-size:15px;color:#c8cbda}.outline{border:1px solid #c2cad9;background:transparent;color:#fff;border-radius:4px;padding:13px 18px;font-weight:800;white-space:nowrap}.outline:hover{background:#25314e}
 /* Projector: board is dominant; controls are a restrained separate strip. */
-.host{height:100vh;min-height:700px;overflow:hidden;display:flex;flex-direction:column;background:#0c1020}.host-header{height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid #39425e}.host-header .title{font-family:var(--font-display);font-weight:900;letter-spacing:.04em;font-size:26px}.host-header .title b{color:var(--board-gold)}.room-code{font-size:14px;font-weight:800;letter-spacing:.08em}.host-content{display:flex;flex:1;min-height:0;gap:22px;padding:20px 22px}.board-area{display:flex;flex-direction:column;min-width:0;flex:1}.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:6px;background:var(--board-edge);border:7px solid var(--board-edge);box-shadow:0 0 0 1px #57658e,0 22px 70px #0008;flex:1;min-height:0}.tile{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--board);text-shadow:2px 3px 2px #0008;border:1px solid #2656d2;padding:9px}.tile.category{font-size:clamp(12px,1.55vw,23px);font-weight:900;line-height:1.12;text-transform:uppercase;color:var(--white)}.tile.value{font-family:var(--font-display);font-weight:900;font-size:var(--text-money);color:var(--board-gold)}.tile.value:hover{background:var(--board-lit)}.tile.empty{color:#8b9bcd;background:#09216c}.host-foot{height:64px;flex:none;display:flex;gap:12px;align-items:center;justify-content:space-between;color:#a9b2cb;font-size:14px}.host-foot strong{color:#fff}.host-foot button{background:#222c45;border:1px solid #737f9d;color:#fff;border-radius:4px;padding:9px 15px}.host-side{width:262px;display:flex;flex-direction:column;gap:16px}.side-section{border-top:3px solid #6a769c;padding-top:12px}.side-section h2{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#b8c0d6;margin:0 0 12px}.score{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-bottom:1px solid #303954;font-size:15px}.score strong{font-family:var(--font-display);font-size:21px;color:var(--board-gold)}.score.lead span:before{content:'●';font-size:9px;color:var(--accent);padding-right:8px}.status{background:#1b2440;border-left:4px solid var(--accent);padding:14px 16px}.status .hint{font-size:12px;color:#bfc6d9;line-height:1.4}.status strong{display:block;font-size:20px;margin:5px 0}.status .clock{font-size:32px;color:var(--board-gold);font-family:var(--font-display);font-weight:900}.host-side .side-section:last-child{margin-top:auto}.host-side button{border:1px solid #76829e;color:#fff;background:#222b44;padding:10px 12px;border-radius:4px;font-size:13px;font-weight:700;text-align:left;width:100%}
+.host{height:100vh;min-height:700px;overflow:hidden;display:flex;flex-direction:column;background:#0c1020}.host-header{height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid #39425e}.host-header .title{font-family:var(--font-display);font-weight:900;letter-spacing:.04em;font-size:26px}.host-header .title b{color:var(--board-gold)}.room-code{font-size:14px;font-weight:800;letter-spacing:.08em}.host-content{display:flex;flex:1;min-height:0;gap:22px;padding:20px 22px}.board-area{display:flex;flex-direction:column;min-width:0;flex:1}.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:6px;background:var(--board-edge);border:7px solid var(--board-edge);box-shadow:0 0 0 1px #57658e,0 22px 70px #0008;flex:1;min-height:0}.tile{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--board);text-shadow:2px 3px 2px #0008;border:1px solid #2656d2;padding:9px}.tile.category{font-size:clamp(12px,1.55vw,23px);font-weight:900;line-height:1.12;text-transform:uppercase;color:var(--white)}.tile.value{font-family:var(--font-display);font-weight:900;font-size:var(--text-money);color:var(--board-gold)}.tile.value:hover{background:var(--board-lit)}.tile.empty{color:#8b9bcd;background:#09216c}.host-foot{height:64px;flex:none;display:flex;gap:12px;align-items:center;justify-content:space-between;color:#a9b2cb;font-size:14px}.host-foot strong{color:#fff}.host-foot button{background:#222c45;border:1px solid #737f9d;color:#fff;border-radius:4px;padding:9px 15px}.host-side{width:262px;display:flex;flex-direction:column;gap:16px}.side-section{border-top:3px solid #6a769c;padding-top:12px}.side-section h2{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#b8c0d6;margin:0 0 12px}.score{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-bottom:1px solid #303954;font-size:15px}.score strong{font-family:var(--font-display);font-size:21px;color:var(--board-gold)}.status{background:#1b2440;border-left:4px solid var(--accent);padding:14px 16px}.status .hint{font-size:12px;color:#bfc6d9;line-height:1.4}.status strong{display:block;font-size:20px;margin:5px 0}.status .clock{font-size:32px;color:var(--board-gold);font-family:var(--font-display);font-weight:900}.host-side .side-section:last-child{margin-top:auto}.host-side button{border:1px solid #76829e;color:#fff;background:#222b44;padding:10px 12px;border-radius:4px;font-size:13px;font-weight:700;text-align:left;width:100%}
 /* Question overlay overlays the board, not the host controls. */
 .board-wrap{position:relative;flex:1;min-height:0;display:flex}.board-wrap .board{width:100%}.reveal{position:absolute;inset:0;border:7px solid var(--board-edge);background:var(--board);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4% 7%}.reveal .kicker{font-size:clamp(15px,1.4vw,22px);font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--board-gold)}.reveal .clue{font-family:var(--font-display);font-weight:900;line-height:1.17;text-transform:uppercase;font-size:clamp(32px,3.4vw,57px);max-width:960px;text-shadow:3px 4px 2px #0008;margin:45px 0}.reveal .buzzed{background:#f8f7f2;color:#151b30;font-weight:900;padding:15px 30px;font-size:19px}.reveal .buzzed b{color:#9e2439}.reveal .clock{position:absolute;bottom:24px;right:28px;font-family:var(--font-display);font-size:42px;color:var(--board-gold)}
 /* Player: single task in reach of a thumb. */
@@ -67,7 +67,7 @@
 .pill.down .live-dot{background:var(--danger)}
 .pill.down{color:#c9a3a0}
 .score>span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.score.lead .adj:before{content:none;padding:0}
+
 
 /* SLxCA game-shell refresh. Jeopardy board tiles and clue geometry remain intact. */
 :root{--accent:#f5427b;--board-gold:#ffffff;--board:#112fa4;--board-lit:#2146c6;--board-edge:#140f48;--focus:0 0 0 3px #fff,0 0 0 6px #f5427b}
@@ -78,19 +78,19 @@
 .join-label{font-size:13px;font-weight:800;letter-spacing:.01em}.join-code{font-size:34px;font-weight:1000;line-height:1;letter-spacing:.11em;color:#4214a3;font-variant-numeric:tabular-nums}
 .host-header .pill{border:0;background:#fff2;color:#fff;font-weight:900;border-radius:12px;padding:13px 15px;white-space:nowrap}.host-header .live-dot{width:10px;height:10px}
 .host-content{gap:16px;padding:22px}.board{border-radius:9px;overflow:hidden;border-width:7px;box-shadow:0 8px 0 #160b4e,0 18px 36px #1b0a5299}.tile.category{background:#233db2}.tile.value:hover{background:#3159d2}.reveal{border-radius:9px}
-.host-side{width:276px;gap:12px}.side-section{border:0;background:#fff;border-radius:13px;padding:15px;color:#24133e;box-shadow:0 5px 0 #190a54}.side-section h2{color:#5f2bb2;font-size:12px;font-weight:1000;margin-bottom:8px}.score{font-size:15px;border-color:#e2dbed}.score strong{color:#5321b5}.score.lead span:before{color:#ed3374}.score.disconnected span{color:#88808e}.score .adj button{background:#ece4fb;border:0;color:#482191;border-radius:7px;font-size:12px;min-width:38px;padding:5px 6px}.score .adj button:hover{background:#d8c8f7}
+.host-side{width:276px;gap:12px}.side-section{border:0;background:#fff;border-radius:13px;padding:15px;color:#24133e;box-shadow:0 5px 0 #190a54}.side-section h2{color:#5f2bb2;font-size:12px;font-weight:1000;margin-bottom:8px}.score{font-size:15px;border-color:#e2dbed}.score strong{color:#5321b5}.score.disconnected span{color:#88808e}.score .adj button{background:#ece4fb;border:0;color:#482191;border-radius:7px;font-size:12px;min-width:38px;padding:5px 6px}.score .adj button:hover{background:#d8c8f7}
 .host-side .status{background:#eee5fe;color:#2b1551;border-left:5px solid #ef397a;border-radius:8px}.status .hint,.queue{color:#5b506d}.status strong{font-size:22px}.status .clock{color:#5721ad}.queue b{color:#24133e}.host-side .side-section:last-child{margin-top:auto}.host-side button{background:#5720bc;border:0;color:#fff;border-radius:9px;padding:12px;font-size:14px;font-weight:900;text-align:center;margin-top:6px;box-shadow:0 3px 0 #2c0c76}.host-side button:not(:disabled):hover{background:#7438d1}.host-side button:disabled{background:#ddd6e8;color:#625b6d;opacity:1;box-shadow:none}.host-foot{color:#eee3ff}.host-foot strong{color:#fff}.notice:empty::before{color:#eee3ff}
 @media(max-width:900px){.host-header{height:92px;padding:10px}.host-header .title{font-size:19px}.room-code{min-width:220px;padding:6px 12px}.join-code{font-size:26px}.join-label{font-size:11px}.host-side{width:210px}.host-content{gap:10px;padding:12px}.side-section{padding:10px}.score{flex-wrap:wrap}.score .adj{order:3;width:100%}}
 
 /* Keep names legible alongside four adjustment controls, even with long team names. */
-.host-side{width:310px;overflow-y:auto;scrollbar-width:thin}.score{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:10px 0}.score>span:first-child{white-space:normal;overflow-wrap:anywhere;overflow:visible;font-weight:800;min-width:0}.score .adj{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;grid-column:1/-1;grid-row:2}.score .adj button{padding:4px 2px;min-width:0;box-shadow:none}.score strong{grid-column:2;grid-row:1;text-align:right}.score.lead .adj:before{content:none}
+.host-side{width:310px;overflow-y:auto;scrollbar-width:thin}.score{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:10px 0}.score>span:first-child{white-space:normal;overflow-wrap:anywhere;overflow:visible;font-weight:800;min-width:0}.score .adj{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;grid-column:1/-1;grid-row:2}.score .adj button{padding:4px 2px;min-width:0;box-shadow:none}.score strong{grid-column:2;grid-row:1;text-align:right}
 @media(max-width:900px){.host-side{width:245px}.score .adj{width:auto}}
 
 .complete-board{background:linear-gradient(135deg,#251178,#5414bf);overflow-y:auto;align-items:flex-start!important}.final-standings{width:min(680px,92%);margin:auto;padding:20px;color:#fff}.final-standings h1{text-align:center;font:900 clamp(32px,4vw,58px) Arial,sans-serif;margin:0 0 24px}.final-team{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 22px;margin:8px 0;border-radius:12px;background:#fff;color:#31116c;font-size:clamp(17px,2vw,25px);font-weight:900;text-shadow:none}.final-team:first-of-type{background:#ffffff}.final-team strong{white-space:nowrap}.score .readmit{grid-column:1/-1;grid-row:3;background:#f4b128;color:#1c1430;box-shadow:none;padding:5px 8px;font-size:12px;text-align:center}
 
 /* Recolor shell only; board remains Jeopardy blue with gold values. */
 :root{--accent:#2f62a5;--board-gold:#ffffff;--focus:0 0 0 3px #fff,0 0 0 6px #2f62a5}
-.host{background:linear-gradient(145deg,#356ba9,#194b87)}.host-header{background:#153e74;box-shadow:0 5px 0 #0d305d}.host-header .title b{color:#ffffff}.room-code{color:#193b67;box-shadow:0 5px 0 #0c305d}.join-code{color:#1b528e}.board{box-shadow:0 8px 0 #0b2e5f,0 18px 36px #0a2c5d99}.side-section{color:#19365f;box-shadow:0 5px 0 #0e335f}.side-section h2{color:#255b9c}.score strong{color:#225da2}.score.lead span:before{color:#2f62a5}.score .adj button{background:#e8f1fa;color:#24558d}.score .adj button:hover{background:#cfe1f4}.host-side .status{background:#e9f2fb;color:#193b67;border-left-color:#2f62a5}.status .clock{color:#225da2}.queue b{color:#19365f}.host-side button{background:#2f62a5;box-shadow:0 3px 0 #17416e}.host-side button:not(:disabled):hover{background:#3b74ba}.host-side button:disabled{background:#d7e0ec;color:#53667d}.host-foot{color:#e3eefb}.notice:empty::before{color:#e3eefb}
+.host{background:linear-gradient(145deg,#356ba9,#194b87)}.host-header{background:#153e74;box-shadow:0 5px 0 #0d305d}.host-header .title b{color:#ffffff}.room-code{color:#193b67;box-shadow:0 5px 0 #0c305d}.join-code{color:#1b528e}.board{box-shadow:0 8px 0 #0b2e5f,0 18px 36px #0a2c5d99}.side-section{color:#19365f;box-shadow:0 5px 0 #0e335f}.side-section h2{color:#255b9c}.score strong{color:#225da2}.score .adj button{background:#e8f1fa;color:#24558d}.score .adj button:hover{background:#cfe1f4}.host-side .status{background:#e9f2fb;color:#193b67;border-left-color:#2f62a5}.status .clock{color:#225da2}.queue b{color:#19365f}.host-side button{background:#2f62a5;box-shadow:0 3px 0 #17416e}.host-side button:not(:disabled):hover{background:#3b74ba}.host-side button:disabled{background:#d7e0ec;color:#53667d}.host-foot{color:#e3eefb}.notice:empty::before{color:#e3eefb}
 .complete-board{background:linear-gradient(135deg,#184d8a,#326fb6)}.final-team{color:#18477c}.final-team:first-of-type{background:#ffffff}.score .readmit{background:#ffffff;color:#19365f}
 
 /* Narrow host screens: board stays first; controls stack beneath it. */
@@ -126,3 +126,79 @@
 .host.slxca-theme .host-brand .host-wordmark,.host.slxca-theme .host-brand>span{display:block}
 .host.slxca-theme .host-partners{display:flex}
 @media(max-width:720px){.host-brand .sighton-logo{width:40px;height:40px}.host-brand strong{font-size:18px}}
+
+.score .leader-medal{display:inline-block;font-size:16px;line-height:1;margin-right:8px;vertical-align:-1px;text-decoration:none}
+/* Event identity in header; participating schools in the board's bottom-left footer. */
+.host .network-mark,.host .host-schools{display:none}
+.host.slxca-theme .network-mark{display:block;width:130px;height:47px;object-fit:contain;content:url('/brand/schulich-network-light.webp');margin-right:auto}
+.host-foot-left{display:flex;align-items:center;gap:18px;min-width:0}
+.host.slxca-theme .host-schools{display:flex;align-items:center;gap:16px;min-width:0}
+.host-schools img{display:block;width:62px;height:34px;object-fit:contain;object-position:center}
+.host-schools img:first-child{width:38px}
+.host-schools img:nth-child(2){width:52px}
+.host.slxca-theme .host-wordmark{background:none;border-radius:0;padding:0}
+.score .leader-medal{display:inline-block;width:19px;height:22px;object-fit:contain;margin-right:8px;vertical-align:-5px}
+@media(max-width:720px){.host.slxca-theme .network-mark{width:85px;height:35px;margin-right:0}.host-foot-left{flex-wrap:wrap;gap:5px}.host.slxca-theme .host-schools{width:100%;gap:12px}.host-schools img{height:26px;width:50px}.host-schools img:first-child{width:26px}.host-schools img:nth-child(2){width:43px}.host.slxca-theme .host-foot{min-height:66px}}
+.host-foot{overflow:visible}
+.host.slxca-theme .host-foot-left{gap:10px}
+.host.slxca-theme .host-schools{padding-left:2px}
+@media(max-width:720px){.host.slxca-theme .host-foot{padding-top:12px;min-height:86px}.host.slxca-theme .host-foot-left{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.host.slxca-theme .host-schools{height:28px}.host.slxca-theme .board-wrap{margin-bottom:4px}}
+
+/* A pale shared ribbon makes dark-blue school marks legible without logo chips. */
+.host.slxca-theme .host-schools{background:#dbeafd;border-radius:3px;padding:5px 12px;gap:17px}
+.host.slxca-theme .host-schools img{width:75px;height:32px}
+.host.slxca-theme .host-schools img:first-child{width:32px}
+.host.slxca-theme .host-schools img:nth-child(2){width:58px}
+.round-meta{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.round-meta #clues-left:empty{display:none}
+@media(max-width:720px){.host.slxca-theme .host-schools{gap:14px;padding:5px 9px;height:34px}.host.slxca-theme .host-schools img{width:68px;height:25px}.host.slxca-theme .host-schools img:first-child{width:27px}.host.slxca-theme .host-schools img:nth-child(2){width:48px}.host.slxca-theme .host-foot{min-height:76px}.host.slxca-theme .host-foot-left{gap:6px}}
+
+/* One contextual action row beneath the slide, never a permanent sidebar of disabled buttons. */
+.slide-controls{display:flex;align-items:center;gap:10px;flex:none;min-height:64px;padding:10px 0 0}
+.slide-controls[hidden]{display:none!important}
+.slide-controls button{border:0;border-radius:7px;background:#dceafa;color:#153d70;font-size:15px;font-weight:900;min-height:46px;padding:10px 18px;cursor:pointer;box-shadow:0 3px 0 #153c70}
+.slide-controls button:hover{background:#eef5fd}
+.slide-controls #cmd-arm,.slide-controls #cmd-correct{background:#fff;color:#1e4e87}
+.slide-controls #cmd-wrong{background:#f5d5d9;color:#7b2432}
+.slide-controls #cmd-back{margin-left:auto}
+.slide-controls button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media(max-width:700px){.slide-controls{gap:8px;min-height:59px;padding-top:9px}.slide-controls button{font-size:13px;min-height:43px;padding:8px 10px}.slide-controls #cmd-back{margin-left:auto}}
+
+/* Buttons are part of the clue slide, bottom edge; keep clue and answer clear. */
+.reveal .slide-controls{position:absolute;bottom:17px;left:20px;right:20px;z-index:2;min-height:0;padding:0;display:flex;flex-wrap:wrap;justify-content:flex-start}
+.reveal .slide-controls button{box-shadow:0 3px 0 #07175a;min-height:42px}
+.reveal .slide-controls #cmd-back{margin-left:auto}
+.reveal .answer{bottom:82px;max-width:75%}
+.reveal .clock{bottom:82px;right:28px}
+@media(max-width:700px){.reveal .slide-controls{bottom:10px;left:10px;right:10px;gap:6px}.reveal .slide-controls button{min-height:39px;font-size:12px;padding:6px 9px}.reveal .answer{bottom:64px;left:10px;max-width:78%;font-size:11px}.reveal .clock{bottom:65px;right:11px}.reveal .clue{margin-bottom:64px}}
+
+/* Adaptive clue controls should not obscure the prompt or answer text. */
+.reveal .slide-controls{background:linear-gradient(0deg,#071a67d9,#071a6700);bottom:0;left:0;right:0;padding:20px 20px 17px;border-radius:0 0 7px 7px}
+.reveal .answer{bottom:90px}
+.reveal .clock{bottom:90px}
+@media(max-width:700px){.reveal .slide-controls{padding:15px 8px 10px}.reveal .answer{bottom:70px}.reveal .clock{bottom:70px}}
+
+/* Back is persistent in the upper left; the clue itself only holds stage actions. */
+.host-header .host-back{appearance:none;display:inline-flex;align-items:center;justify-content:center;flex:none;padding:9px 12px;min-height:38px;border:1px solid #8eaacc;border-radius:6px;color:#fff;background:#ffffff1a;font:800 13px Arial,Helvetica,sans-serif;cursor:pointer}
+.host-header .host-back:disabled{opacity:.4;cursor:not-allowed}
+.host-header .host-back:not(:disabled):hover{background:#ffffff36}
+.host-header .host-back:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.reveal .buzzed{margin-bottom:36px}
+.reveal .clock{bottom:88px}
+@media(max-width:700px){.host-header .host-back{position:absolute;left:10px;top:12px;min-height:34px;padding:5px 8px;font-size:11px}.host-header{padding-top:52px}.reveal .buzzed{margin-bottom:56px;font-size:12px;padding:8px 12px}.reveal .clock{bottom:78px;right:13px;font-size:20px}.reveal .clue{margin-top:9px;margin-bottom:20px;font-size:clamp(19px,5.7vw,32px)}.reveal .slide-controls{padding:12px 8px 10px}}
+
+.reveal .slide-controls #cmd-resolved-back{background:#fff;color:#153d70}
+@media(max-width:700px){.reveal .buzzed:not([hidden]){max-width:80%;margin-bottom:68px}.reveal .clue{font-size:clamp(18px,5.2vw,31px);margin:5px 0 15px}.reveal .clock{bottom:83px}.reveal .answer{bottom:82px}}
+
+/* The status/footer takes a single compact row, leaving room for clues. */
+.host-foot{height:42px;min-height:42px;padding:4px 0;gap:8px}
+.host.slxca-theme .host-schools{padding:2px 8px;gap:10px}
+.host.slxca-theme .host-schools img{height:27px;width:62px}
+.host.slxca-theme .host-schools img:first-child{width:27px}
+.host.slxca-theme .host-schools img:nth-child(2){width:48px}
+.host-foot-left{gap:9px}
+.reveal .clue{width:100%;overflow-wrap:anywhere;min-height:0;flex-shrink:1}
+@media(max-width:700px){.host-foot,.host.slxca-theme .host-foot{min-height:0;height:auto;padding:5px 0;gap:3px}.host.slxca-theme .host-foot-left{gap:3px}.host.slxca-theme .host-schools{height:26px;padding:2px 7px}.host.slxca-theme .host-schools img{height:21px;width:54px}.host.slxca-theme .host-schools img:first-child{width:23px}.host.slxca-theme .host-schools img:nth-child(2){width:44px}.host-foot .notice{font-size:11px}}
+
+/* The persistent header Back is never displaced on narrow screens. */
+@media(max-width:700px){.host-header{position:relative}.host-header .host-back{z-index:3}.host-brand{margin-top:0}}

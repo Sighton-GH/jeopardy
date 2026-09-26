@@ -190,6 +190,28 @@ function renderReveal() {
   } else buzzed.hidden = true;
 }
 
+function fitClue() {
+  const slide = el('reveal');
+  if (slide.hidden) return;
+  const clue = el('reveal-clue');
+  const slideHeight = slide.clientHeight;
+  const reserved = el('reveal-buzzed').hidden ? 140 : 200;
+  const answerReserved = el('reveal-answer').hidden ? 0 : 35;
+  clue.style.maxHeight = `${Math.max(80, slideHeight - reserved - answerReserved)}px`;
+  clue.style.overflow = 'hidden';
+  const maxSize = Math.min(57, Math.max(24, slide.clientWidth * (matchMedia('(max-width: 700px)').matches ? 0.063 : 0.05)));
+  let low = 12;
+  let high = maxSize;
+  for (let i = 0; i < 9; i++) {
+    const mid = (low + high) / 2;
+    clue.style.fontSize = `${mid}px`;
+    if (clue.scrollHeight > clue.clientHeight + 1 || clue.scrollWidth > clue.clientWidth + 1) high = mid;
+    else low = mid;
+  }
+  clue.style.fontSize = `${low}px`;
+  if (clue.scrollHeight > clue.clientHeight + 1) clue.style.overflowY = 'auto';
+}
+
 function renderScores() {
   const scores = el('scores');
   scores.replaceChildren();
@@ -207,7 +229,14 @@ function renderScores() {
     if (index === 0) row.classList.add('lead');
     if (!team.connected) row.classList.add('disconnected');
     const name = document.createElement('span');
-    name.textContent = team.name;
+    if (index === 0) {
+      const medal = document.createElement('img');
+      medal.className = 'leader-medal';
+      medal.src = '/brand/leader-medal.svg';
+      medal.alt = 'Leading team';
+      name.append(medal);
+    }
+    name.append(document.createTextNode(team.name));
     const adjust = document.createElement('span');
     adjust.className = 'adj';
     if (!team.connected) {
@@ -271,16 +300,27 @@ function renderBuzzers() {
 
 function renderControls() {
   const phase = state?.phase;
-  el<HTMLButtonElement>('cmd-arm').disabled = phase !== 'question-showing';
-  el<HTMLButtonElement>('cmd-correct').disabled = phase !== 'buzzed';
-  el<HTMLButtonElement>('cmd-wrong').disabled = phase !== 'buzzed';
-  el<HTMLButtonElement>('cmd-back').disabled = !phase || phase === 'lobby' || phase === 'board' || phase === 'complete';
+  const visible = phase === 'question-showing' || phase === 'buzz-open' || phase === 'buzzed' || phase === 'resolving';
+  el('slide-controls').hidden = !(phase === 'question-showing' || phase === 'buzzed' || phase === 'resolving');
+  const actions: Array<[string, boolean]> = [
+    ['cmd-arm', phase === 'question-showing'],
+    ['cmd-correct', phase === 'buzzed'],
+    ['cmd-wrong', phase === 'buzzed'],
+    ['cmd-resolved-back', phase === 'resolving'],
+  ];
+  el<HTMLButtonElement>('cmd-back').disabled = !visible;
+  for (const [id, show] of actions) {
+    const button = el<HTMLButtonElement>(id);
+    button.hidden = !show;
+    button.disabled = !show;
+  }
 }
 
 el<HTMLButtonElement>('cmd-arm').onclick = () => send({ type: 'arm_buzzers' });
 el<HTMLButtonElement>('cmd-correct').onclick = () => { const teamId = state?.buzzQueue[0]; if (teamId) send({ type: 'correct', teamId }); };
 el<HTMLButtonElement>('cmd-wrong').onclick = () => { const teamId = state?.buzzQueue[0]; if (teamId) send({ type: 'wrong', teamId }); };
 el<HTMLButtonElement>('cmd-back').onclick = () => send({ type: 'back_to_board' });
+el<HTMLButtonElement>('cmd-resolved-back').onclick = () => send({ type: 'back_to_board' });
 
 function tick() {
   const deadline = state?.buzzerDeadline;
@@ -299,8 +339,10 @@ function render() {
   renderScores();
   renderBuzzers();
   renderControls();
+  requestAnimationFrame(fitClue);
   tick();
 }
 
+new ResizeObserver(() => requestAnimationFrame(fitClue)).observe(el('reveal'));
 setInterval(tick, 200);
 render();

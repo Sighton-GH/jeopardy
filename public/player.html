@@ -12,8 +12,9 @@
     <div class="brand"><img class="sighton-logo" src="/brand/sighton-logo.svg" alt="Sighton Media"><span>Sighton Jeopardy</span><img class="slxca-wordmark" src="/brand/slxca-wordmark.webp" alt="SLxCA"><small>Jeopardy</small></div>
     <span class="pill" id="room-code" aria-label="Room code"></span>
   </header>
+
   <main class="player-main">
-    <div class="identity"><img class="player-event-logo" src="/brand/slxca-26.webp" alt="SLxCA 2026">
+    <div class="identity"><div class="player-marks"><img class="player-event-logo" src="/brand/slxca-26.webp" alt="SLxCA 2026"><img class="player-network-logo" src="/brand/schulich-network.webp" alt="Schulich Leader Network"></div>
       <div class="team">You're playing as</div>
       <div class="team"><strong id="team-name">Your team</strong></div>
       <div class="player-score" id="score">0 points</div>
@@ -27,6 +28,7 @@
     <p class="connection-note" id="connection-note" role="alert" hidden></p>
     <a class="back-link" href="/">Leave game</a>
   </main>
+  <div class="player-schools" aria-label="Participating schools"><span>Participating schools</span><div><img src="/brand/ubc.webp" alt="UBC"><img src="/brand/sfu.webp" alt="SFU"><img src="/brand/uvic.webp" alt="UVic"></div></div>
   <script type="module" src="/player.ts"></script>
 </body>
 </html>

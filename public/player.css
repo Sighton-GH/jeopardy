@@ -70,3 +70,21 @@ button:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
 /* Armed means actionable: red only while this team can buzz; locked/waiting stay distinct. */
 .player[data-state=ready] .buzz:not(:disabled){background:#d92b36;border-color:#fff;box-shadow:0 12px 0 #8d1724,0 20px 28px #092d60a6}
 .player[data-state=ready] .buzz:not(:disabled):active{box-shadow:0 5px 0 #8d1724,0 12px 19px #092d60a6}
+/* School marks belong to the room's bottom-left edge, not the buzzer header. */
+.player .player-schools,.player .player-network-logo{display:none}
+.player.slxca-theme .player-schools{display:flex;align-items:center;gap:11px;flex:none;align-self:flex-start;padding:3px 20px max(9px,env(safe-area-inset-bottom));color:#e6effb}
+.player-schools span{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;white-space:nowrap}
+.player-schools>div{display:flex;align-items:center;gap:10px}
+.player-schools img{display:block;object-fit:contain;width:45px;height:27px}
+.player-schools img:first-child{width:24px}
+.player-schools img:nth-child(2){width:40px}
+.player.slxca-theme .player-marks{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.player.slxca-theme .player-event-logo{margin:0;background:none;padding:0}
+.player.slxca-theme .player-network-logo{display:block;width:140px;height:49px;object-fit:contain;background:none;padding:0}
+.player.slxca-theme .slxca-wordmark{background:none;padding:0}
+@media(max-width:390px){.player.slxca-theme .player-schools{gap:8px}.player-schools>div{gap:7px}}
+
+.player.slxca-theme .player-schools{background:#dbeafd;color:#184877;padding:8px 20px max(8px,env(safe-area-inset-bottom));width:100%}
+.player.slxca-theme .player-schools img{width:58px;height:28px}
+.player.slxca-theme .player-schools img:first-child{width:27px}
+.player.slxca-theme .player-schools img:nth-child(2){width:48px}
