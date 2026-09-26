@@ -1,13 +1,13 @@
-import type { BoardInput, Category, HostCommand, Phase, Team, View } from './protocol';
+import type { BoardInput, Category, GameTheme, HostCommand, Phase, Team, View } from './protocol';
 
 export const ANSWER_SECONDS = 15;
 export class GameError extends Error { constructor(public code: string, message: string) { super(message); } }
 export interface GameState {
-  phase: Phase; teams: Team[]; board: Category[]; selectedCellId: string | null;
+  theme: GameTheme; phase: Phase; teams: Team[]; board: Category[]; selectedCellId: string | null;
   buzzQueue: string[]; lockedOut: string[]; buzzerDeadline: number | null;
   hostConnected: boolean; version: number;
 }
-export function initialState(): GameState { return { phase: 'lobby', teams: [], board: [], selectedCellId: null, buzzQueue: [], lockedOut: [], buzzerDeadline: null, hostConnected: false, version: 0 }; }
+export function initialState(): GameState { return { theme: 'sighton', phase: 'lobby', teams: [], board: [], selectedCellId: null, buzzQueue: [], lockedOut: [], buzzerDeadline: null, hostConnected: false, version: 0 }; }
 const fail = (code: string, message: string): never => { throw new GameError(code, message); };
 export function selected(s: GameState) { return s.board.flatMap(c => c.cells).find(c => c.id === s.selectedCellId); }
 export function view(s: GameState, host: boolean): View {
@@ -59,7 +59,9 @@ export function hostCommand(s: GameState, command: HostCommand, now: number): vo
   switch (command.type) {
     case 'load_board':
       if (s.phase !== 'lobby' && s.phase !== 'board') fail('phase', 'Cannot replace board mid-question');
-      s.board = validateBoard(command.board); s.phase = 'board'; s.selectedCellId = null; s.buzzQueue = []; s.lockedOut = []; s.buzzerDeadline = null; break;
+      if (command.board.theme !== undefined && command.board.theme !== 'sighton' && command.board.theme !== 'slxca-2026') fail('board', 'Invalid board theme');
+      s.board = validateBoard(command.board);
+      s.theme = command.board.theme === 'slxca-2026' ? 'slxca-2026' : 'sighton'; s.phase = 'board'; s.selectedCellId = null; s.buzzQueue = []; s.lockedOut = []; s.buzzerDeadline = null; break;
     case 'pick_cell': {
       if (s.phase !== 'board') fail('phase', 'Return to board first');
       const cell = s.board.flatMap(c => c.cells).find(c => c.id === command.cellId);

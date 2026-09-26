@@ -55,3 +55,17 @@ it('rejects adjudication that would overflow a safe integer score', () => {
   expect(() => hostCommand(s, { type: 'wrong', teamId: 'a' }, 1)).toThrow('safe range');
   expect(s.teams[0]!.score).toBe(Number.MIN_SAFE_INTEGER + 100);
 });
+
+describe('room theme', () => {
+  it('keeps Sighton default and carries event theme in both public and host views', async () => {
+    const { initialState, hostCommand, view } = await import('../src/state');
+    const game = initialState();
+    expect(view(game, false).theme).toBe('sighton');
+    const board = { theme: 'slxca-2026' as const, categories: [{ id: 'c1', name: 'A', cells: [{ id: 'a1', question: 'Q', answer: 'A', value: 100, dailyDouble: false }] }] };
+    hostCommand(game, { type: 'load_board', board }, Date.now());
+    expect(view(game, false).theme).toBe('slxca-2026');
+    expect(view(game, true).theme).toBe('slxca-2026');
+    hostCommand(game, { type: 'load_board', board: { categories: board.categories } }, Date.now());
+    expect(view(game, false).theme).toBe('sighton');
+  });
+});

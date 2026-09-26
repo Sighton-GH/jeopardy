@@ -203,3 +203,14 @@ describe('parseXlsx', () => {
     await expect(parseXlsx(new TextEncoder().encode('not a zip at all'))).rejects.toThrow('not a valid ZIP');
   });
 });
+
+describe('per-board event theme', () => {
+  it('activates only with the matching identifier in every row', async () => {
+    const { SLXCA_THEME_ID } = await import('../src/parse_board');
+    const csv = `category,question,answer,value,theme\nA,Q1,A1,100,${SLXCA_THEME_ID}\nA,Q2,A2,200,${SLXCA_THEME_ID}`;
+    expect((await parseBoardFile('event.csv', csv)).theme).toBe('slxca-2026');
+    expect((await parseBoardFile('ordinary.csv', 'category,question,answer,value\nA,Q,A,100')).theme).toBeUndefined();
+    expect(issuesOf(() => rowsToBoard(parseCsv(csv.replace(SLXCA_THEME_ID, 'slxca-2026')))).join(' ')).toContain('Unknown theme');
+    expect(issuesOf(() => rowsToBoard(parseCsv(csv.replace(`200,${SLXCA_THEME_ID}`, '200,')))).join(' ')).toContain('same on every clue');
+  });
+});

@@ -109,3 +109,20 @@
 }
 
 .host.game-complete .notice:empty::before{content:''}
+
+/* Brand strip stays secondary to the game board and room code. */
+.host-brand{display:flex;align-items:center;gap:10px;flex:none;color:#fff;font-size:23px;font-weight:900;letter-spacing:-.03em;white-space:nowrap}
+.host-wordmark{width:124px;height:auto;display:block;background:#f7f7f7;padding:4px;border-radius:6px}
+.host-partners{display:flex;align-items:center;gap:7px;min-width:0;margin:0 auto;overflow:hidden}
+.host-partners img{height:38px;max-width:126px;width:auto;min-width:0;object-fit:contain;display:block;background:#f7f7f7;padding:5px;border-radius:5px}
+.host-partners img:first-child{max-width:126px}
+@media(max-width:1100px){.host-header{gap:12px;padding:10px 14px}.host-brand{font-size:18px}.host-wordmark{width:98px}.host-partners{gap:5px}.host-partners img{height:31px;max-width:98px;padding:4px}}
+@media(max-width:720px){.host-header{justify-content:space-between}.host-partners{order:3;flex-basis:100%;justify-content:center;margin:0}.host-partners img{height:30px;max-width:105px}.host-brand{font-size:18px}}
+@media(max-width:390px){.host-wordmark{width:85px}.host-brand{font-size:16px}.host-partners img{height:26px;max-width:95px;padding:3px}}
+.host-brand .host-wordmark,.host-brand>span,.host-partners{display:none}
+.host-brand .sighton-logo{width:52px;height:52px;display:block;object-fit:contain}
+.host-brand strong{font:900 23px Arial,Helvetica,sans-serif;letter-spacing:-.03em}
+.host.slxca-theme .host-brand .sighton-logo,.host.slxca-theme .host-brand strong{display:none}
+.host.slxca-theme .host-brand .host-wordmark,.host.slxca-theme .host-brand>span{display:block}
+.host.slxca-theme .host-partners{display:flex}
+@media(max-width:720px){.host-brand .sighton-logo{width:40px;height:40px}.host-brand strong{font-size:18px}}

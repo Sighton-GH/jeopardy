@@ -46,3 +46,7 @@ This app runs one Jeopardy round. Daily-double cells are hidden until selected b
 Visual shell: game-style rounded controls, large join code, blue-and-white SLxCA palette. The host board keeps its deep Jeopardy blue layout. No live-status badge is shown; connection failures appear as text only when needed.
 
 Browser-visible join failures: a rejected team WebSocket upgrades long enough to send an error event before closing, so duplicate names, full rooms, and mid-question joins display specific messages instead of an unreadable HTTP-handshake body. The host page stacks board then panels at narrow widths.
+
+### Board-specific branding
+
+Sighton Jeopardy is the default on join, create, host and player screens. The optional `theme` column on a single-round spreadsheet activates SLxCA 2026 styling when every clue row has the exact identifier `slxca26-c031bf30a52ed11fc75cd6cc`. The file `SLxCA26 Jeopardy Board - themed.xlsx` distributed to the event organizer carries it. Blank/missing theme uses Sighton styling. A mismatched or unknown identifier is rejected rather than silently changing a game. The theme is stored with the room state and sent to both host and participant views; switching boards updates it. Original event logos are provided by the organizer; Sighton logo is sourced from https://sighton.ca/sighton-logo.svg.

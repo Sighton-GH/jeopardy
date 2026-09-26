@@ -22,6 +22,7 @@ export const MAX_CATEGORIES = 10;
 export const MAX_CELLS_PER_CATEGORY = 10;
 export const MAX_VALUE = 100000;
 const MAX_ROWS = 200; // sanity cap; a legal board needs at most 100 clue rows
+export const SLXCA_THEME_ID = 'slxca26-c031bf30a52ed11fc75cd6cc';
 const FIRST_ROUND_VALUES = [200, 400, 600, 800, 1000];
 
 export class BoardParseError extends Error {
@@ -82,7 +83,7 @@ export function parseCsv(text: string): string[][] {
 /* --------------------------- Row normalization --------------------------- */
 
 const HEADER_ALIASES: Record<string, string> = {
-  round: 'round',
+  round: 'round', theme: 'theme',
   cat: 'category', category: 'category',
   q: 'question', question: 'question', clue: 'question',
   a: 'answer', answer: 'answer', response: 'answer',
@@ -124,6 +125,8 @@ export function rowsToBoard(rows: string[][]): BoardInput {
   const valueCol = columns.get('value');
   const roundCol = columns.get('round');
   const ddCol = columns.get('dd');
+  const themeCol = columns.get('theme');
+  const themeValues = new Set<string>();
 
   for (let r = 1; r < rows.length; r++) {
     const cells = rows[r]!;
@@ -133,6 +136,7 @@ export function rowsToBoard(rows: string[][]): BoardInput {
     const question = at(columns.get('question'));
     const answer = at(columns.get('answer'));
     const round = at(roundCol);
+    themeValues.add(at(themeCol));
     if (!category) issues.push(`${label}: category is empty.`);
     if (!question) issues.push(`${label}: question is empty.`);
     if (!answer) issues.push(`${label}: answer is empty.`);
@@ -155,6 +159,9 @@ export function rowsToBoard(rows: string[][]): BoardInput {
     refs.push({ sheetRow: r + 1, round, category, question, answer, value, dailyDouble });
   }
 
+  if (themeValues.size > 1) issues.push('Theme identifier must be the same on every clue row.');
+  const theme = [...themeValues][0] ?? '';
+  if (theme && theme !== SLXCA_THEME_ID) issues.push(`Unknown theme identifier "${theme}". Remove it or use the event board's identifier.`);
   const rounds = [...new Set(refs.map(ref => ref.round).filter(r => r !== ''))];
   if (rounds.length > 1) {
     issues.push(`The file has ${rounds.length} rounds (${rounds.join(', ')}). Keep only one round in this CSV or first sheet, then upload it. Create a separate room for each round.`);
@@ -200,7 +207,7 @@ export function rowsToBoard(rows: string[][]): BoardInput {
       })),
     };
   });
-  return { categories };
+  return { categories, ...(theme ? { theme: 'slxca-2026' as const } : {}) };
 }
 
 /* ---------------------------------- XLSX ---------------------------------- */

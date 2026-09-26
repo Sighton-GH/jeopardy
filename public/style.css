@@ -17,3 +17,21 @@
 :root{--accent:#2f62a5;--board-gold:#ffffff;--focus:0 0 0 3px #fff,0 0 0 6px #2f62a5}
 .landing{background:radial-gradient(circle at 91% 8%,#8db5e0 0 17%,transparent 17.2%),radial-gradient(circle at 2% 100%,#194778 0 23%,transparent 23.2%),linear-gradient(133deg,#386fb4,#1c4e90 60%,#153c74)}
 .landing .topbar{background:#103764bf;box-shadow:0 2px 15px #09294b4d}.landing .brand-mark{background:#ffffff}.intro .event,.intro h1 span{color:#ffffff}.entry{box-shadow:0 10px 0 #0e345d,0 28px 65px #09294b7a}.entry input:focus{border-color:#2f62a5;outline:3px solid #adcaee}.entry .primary:hover{background:#23548f}.landing .outline{background:#e6f0fb;color:#174982}.landing .outline:hover{background:#cfe3f8}
+
+/* Event artwork: keep the compact source marks on a neutral field, never stretch them. */
+.landing .brand{gap:9px;letter-spacing:0;text-transform:none}
+.landing .brand .slxca-wordmark{display:block;width:118px;height:auto;padding:3px;border-radius:5px;background:#f7f7f7}
+.landing .brand small{font-size:14px;font-weight:800}
+.intro .event-logo{display:block;width:min(240px,55vw);height:auto;background:#f7f7f7;padding:8px;border-radius:9px}
+.intro h1{margin:22px 0 25px}
+.event-partners{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.event-partners img{display:block;object-fit:contain;max-width:100%;height:46px;width:auto;background:#f7f7f7;border-radius:6px;padding:7px}
+.event-partners img:first-child{height:46px}
+.event-partners img:last-child{height:46px}
+@media(max-width:550px){.landing .brand .slxca-wordmark{width:88px}.landing .brand small{font-size:12px}.intro .event-logo{width:170px}.intro h1{margin:17px 0}.event-partners{gap:6px}.event-partners img{height:36px;padding:5px}.event-partners img:first-child,.event-partners img:last-child{height:36px}}
+.landing .brand .slxca-wordmark{display:none}
+.landing .brand .sighton-logo{display:block;width:43px;height:40px;object-fit:contain}
+.landing .brand span{font-size:19px;color:#fff;font-weight:800}
+.landing .sighton-credit{font-size:15px;color:#e1ecf8}
+.landing .sighton-credit a{color:#fff;text-underline-offset:3px}
+@media(max-width:550px){.landing .brand .sighton-logo{width:32px;height:34px}.landing .brand span{font-size:15px}}

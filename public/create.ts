@@ -36,10 +36,13 @@ function renderPreview(parsed: BoardInput) {
     return row;
   }));
   el('preview').hidden = false;
+  el('theme-label').textContent = parsed.theme === 'slxca-2026' ? 'SLxCA 2026 theme' : 'Sighton Jeopardy theme';
 }
 
 async function handleFile(file: File) {
   board = null;
+  document.body.classList.remove('slxca-theme');
+  document.querySelector<HTMLLinkElement>('link[rel="icon"]')?.setAttribute('href', '/brand/sighton-logo.svg');
   setStatus('');
   showIssues([]);
   el('preview').hidden = true;
@@ -47,6 +50,8 @@ async function handleFile(file: File) {
   try {
     const parsed = await parseBoardFile(file.name, new Uint8Array(await file.arrayBuffer()));
     board = parsed;
+    document.body.classList.toggle('slxca-theme', parsed.theme === 'slxca-2026');
+    document.querySelector<HTMLLinkElement>('link[rel="icon"]')?.setAttribute('href', parsed.theme === 'slxca-2026' ? '/brand/slxca-26.webp' : '/brand/sighton-logo.svg');
     setStatus('');
     renderPreview(parsed);
   } catch (error) {
@@ -114,10 +119,10 @@ el('create').onclick = () => void createGame();
 el('template').onclick = event => {
   event.preventDefault();
   const csv = [
-    'round,cat,value,q,a,dd',
-    '1,Category One,200,Your first clue,The answer,no',
-    '1,Category One,400,Your second clue,The answer,no',
-    '1,Category Two,200,A clue in another category,The answer,yes',
+    'round,cat,value,q,a,dd,theme',
+    '1,Category One,200,Your first clue,The answer,no,',
+    '1,Category One,400,Your second clue,The answer,no,',
+    '1,Category Two,200,A clue in another category,The answer,yes,',
   ].join('\n');
   const link = document.createElement('a');
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));

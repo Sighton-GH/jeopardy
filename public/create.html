@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SLxCA Jeopardy - Create a game</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sighton Jeopardy - Create a game</title><style>
 /* Theme tokens from the SLxCA design slice, inlined so this page is self-contained. */
 :root{--stage:#080b18;--stage-2:#11182d;--board:#082a9b;--board-lit:#123bbb;--board-edge:#050d33;--board-gold:#ffffff;--white:#f9f8f3;--ink:#151a2a;--muted:#8790a9;--accent:#2f62a5;--good:#49be85;--danger:#2f62a5;--line:#39425e;--font-ui:Arial,Helvetica,sans-serif;--font-display:Georgia,'Times New Roman',serif;--focus:0 0 0 3px #fff,0 0 0 6px var(--accent)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:linear-gradient(145deg,#3975b5,#1a4c87);color:#15365f;font-family:var(--font-ui)}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:none;box-shadow:var(--focus)}[hidden]{display:none!important}
@@ -26,8 +26,10 @@
 .primary:disabled{background:#c8d8e8;color:#536b83;cursor:not-allowed}
 .status{margin:14px 0 0;font-size:14px;color:#547391;min-height:20px}
 @media(max-width:550px){.topbar{height:64px;padding:0 22px}.panel{padding:27px 23px}}
-</style><link rel="icon" type="image/svg+xml" href="/favicon.svg"></head><body>
-<header class="topbar"><div class="brand"><i class="brand-mark" aria-hidden="true"></i>SLxCA <small>Jeopardy</small></div><a href="/">Join a game</a></header>
+ .sighton-logo{display:block;width:45px;height:40px;object-fit:contain}.brand{gap:8px;letter-spacing:0;text-transform:none}.brand span{font-size:17px;font-weight:800;color:#fff}#theme-label{font-weight:800;color:#23548f}
+body.slxca-theme .topbar .brand .sighton-logo,body.slxca-theme .topbar .brand span{display:none}body.slxca-theme .topbar .brand:before{content:"";display:block;width:112px;height:37px;background:#f7f7f7 url("/brand/slxca-wordmark.webp") center/contain no-repeat;border-radius:5px}body.slxca-theme .topbar .brand:after{content:"Jeopardy";font-weight:800}
+</style><link rel="icon" type="image/svg+xml" href="/brand/sighton-logo.svg"></head><body>
+<header class="topbar"><div class="brand"><img class="sighton-logo" src="/brand/sighton-logo.svg" alt="Sighton Media"><span>Sighton Jeopardy</span></div><a href="/">Join a game</a></header>
 <main class="wrap"><section class="panel">
 <h1>Create a game</h1>
 <p>Upload your board to get a game code and host link.</p>
@@ -37,9 +39,9 @@
 <input type="file" id="file" accept=".csv,.xlsx" hidden>
 <small>.csv or .xlsx</small>
 </div>
-<p class="hint">Jeopardy Labs export (<code>round, cat, value, q, a, dd</code>) or a sheet with <code>category, question, answer, value</code>. <a href="#" id="template">Download a template</a></p>
+<p class="hint">Jeopardy Labs export (<code>round, cat, value, q, a, dd</code>) or a sheet with <code>category, question, answer, value</code>. The optional <code>theme</code> column applies event branding only to a matching board. <a href="#" id="template">Download a template</a></p>
 <ul class="errors" id="errors" hidden></ul>
-<div class="preview" id="preview" hidden>
+<div class="preview" id="preview" hidden><p id="theme-label" aria-live="polite"></p>
 <h2>Your board</h2>
 <div id="cats"></div>
 <button class="primary" id="create" type="button">Create game</button>

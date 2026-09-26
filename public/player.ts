@@ -41,6 +41,9 @@ function activeClue(state: View): string {
 }
 function render(state: View) {
   latest = state;
+  document.body.classList.toggle('slxca-theme', state.theme === 'slxca-2026');
+  document.title = state.theme === 'slxca-2026' ? 'SLxCA Jeopardy - Buzzer' : 'Sighton Jeopardy - Buzzer';
+  document.querySelector<HTMLLinkElement>('link[rel="icon"]')?.setAttribute('href', state.theme === 'slxca-2026' ? '/brand/slxca-26.webp' : '/brand/sighton-logo.svg');
   const mine = state.teams.find(t => t.id === teamId);
   if (mine) {
     node('team-name').textContent = mine.name;

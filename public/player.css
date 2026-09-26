@@ -54,3 +54,19 @@ button:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
 .buzz{background:#2f62a5;box-shadow:0 12px 0 #183e6b,0 20px 28px #092d60a6}.buzz:active:not(:disabled){box-shadow:0 5px 0 #183e6b,0 12px 19px #092d60a6}.buzz:disabled{background:#97a7b9;border-color:#e5edf5;box-shadow:0 8px 0 #526c87}.player[data-state=locked] .buzz:disabled{background:#168c70;border-color:#d7ffed;box-shadow:0 8px 0 #0d7251}.player[data-state=locked][data-lock-reason=out] .buzz:disabled{background:#97a7b9;border-color:#e5edf5;box-shadow:0 8px 0 #526c87}
 
 .player .connection-note{color:#1c4c84;border:2px solid #b9d2ea}
+.player-head .brand{gap:8px;letter-spacing:0;text-transform:none}
+.player-head .slxca-wordmark{display:block;width:104px;height:auto;padding:3px;border-radius:5px;background:#f7f7f7}
+.player-head .brand small{font-size:13px;font-weight:800;letter-spacing:0;color:#fff}
+@media(max-width:550px){.player-head .slxca-wordmark{width:98px}}
+.player-head .slxca-wordmark,.player-head .brand small{display:none}
+.player-head .sighton-logo{display:block;width:39px;height:39px;object-fit:contain}
+.player-head .brand span{font-size:17px;font-weight:900;color:#fff}
+.player.slxca-theme .player-head .sighton-logo,.player.slxca-theme .player-head .brand span{display:none}
+.player.slxca-theme .player-head .slxca-wordmark{display:block}
+.player.slxca-theme .player-head .brand small{display:block}
+
+.player-event-logo{display:none}
+.player.slxca-theme .player-event-logo{display:block;width:100px;height:auto;background:#f7f7f7;padding:5px;border-radius:6px;margin-bottom:12px}
+/* Armed means actionable: red only while this team can buzz; locked/waiting stay distinct. */
+.player[data-state=ready] .buzz:not(:disabled){background:#d92b36;border-color:#fff;box-shadow:0 12px 0 #8d1724,0 20px 28px #092d60a6}
+.player[data-state=ready] .buzz:not(:disabled):active{box-shadow:0 5px 0 #8d1724,0 12px 19px #092d60a6}
