@@ -157,8 +157,8 @@ function renderBoard() {
       const tile = document.createElement('button');
       tile.className = cell.revealed ? 'tile empty' : 'tile value';
       // Keep daily doubles hidden until the cell is picked.
-      tile.textContent = cell.revealed ? '' : cell.value.toLocaleString();
-      tile.setAttribute('aria-label', `${category.name} for ${cell.value}`);
+      tile.textContent = cell.revealed ? '' : `$${cell.value.toLocaleString()}`;
+      tile.setAttribute('aria-label', `${category.name} for $${cell.value.toLocaleString()}`);
       tile.disabled = cell.revealed || state.phase !== 'board';
       tile.onclick = () => send({ type: 'pick_cell', cellId: cell.id });
       board.append(tile);

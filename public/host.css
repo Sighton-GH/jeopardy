@@ -211,3 +211,21 @@
 .reveal .reading-bar{position:absolute;left:20px;right:20px;bottom:80px;height:9px;border-radius:6px;background:#ffffff47;overflow:hidden}.reveal .reading-bar[hidden]{display:none}.reveal .reading-bar span{display:block;height:100%;background:#fff;transition:width .2s linear}
 .final-standings .winner{text-align:center;font:800 clamp(19px,2.5vw,31px) Arial,sans-serif}.final-standings .new-game{display:block;margin:18px auto 0;padding:12px 16px;width:max-content;background:#fff;color:#174776;border-radius:8px;text-decoration:none;font-weight:800}
 @media(max-width:700px){.host-header .settings-open{position:absolute;right:10px;top:12px;z-index:3;min-height:34px;padding:5px 8px;font-size:11px}.reveal .reading-bar{bottom:68px;left:10px;right:10px}}
+
+/* Game board type and colour, informed by the supplied board reference.
+   Only the board and clue slide change: event identity and controls keep their own styling. */
+@font-face{font-family:'Oswald Board';src:url('/fonts/oswald-latin.woff2') format('woff2');font-style:normal;font-weight:400 700;font-display:swap}
+.host{--board:#062786;--board-lit:#1244bb;--board-edge:#03091d;--board-gold:#f5bd48;--board-letter:'Oswald Board','Arial Narrow','Liberation Sans Narrow',Impact,sans-serif}
+.host .board{gap:5px;border:8px solid var(--board-edge);border-radius:3px;background:var(--board-edge);box-shadow:0 0 0 1px #62749b,0 12px 35px #031028ae}
+.host .board .tile{min-width:0;padding:5px;background:radial-gradient(ellipse at 50% 40%,#0b36a0 0%,#082e91 55%,#041e6c 100%);border:1px solid #2149ab;border-radius:2px;box-shadow:inset 0 1px 1px #5474c170,inset 0 -3px 9px #00134d77;text-shadow:1px 3px 2px #0009}
+.host .board .tile.category{font-family:var(--board-letter);font-size:clamp(15px,1.8vw,28px);font-weight:600;line-height:1.08;letter-spacing:.005em;color:#fff;overflow-wrap:normal;word-break:normal;hyphens:auto}
+.host .board .tile.value{font-family:var(--board-letter);font-size:clamp(25px,3.3vw,54px);font-weight:600;line-height:1;letter-spacing:-.025em;color:var(--board-gold);font-variant-numeric:tabular-nums}
+.host .board .tile.value:not(:disabled):hover{background:#1646ba;box-shadow:inset 0 0 0 2px #83a6ee,0 0 15px #8facff}
+.host .board .tile.value:disabled:hover{background:radial-gradient(ellipse at 50% 40%,#0b36a0 0%,#082e91 55%,#041e6c 100%)}
+.host .board .tile.empty,.host .board .tile.empty:disabled:hover{background:#041c67;box-shadow:inset 0 0 14px #010c3b}
+.host .reveal{border:8px solid var(--board-edge);border-radius:3px;background:radial-gradient(ellipse at center,#103dab 0%,#092f96 56%,#051b68 100%);box-shadow:inset 0 0 0 1px #5375c096}
+.host .reveal .kicker{font-family:var(--board-letter);font-size:clamp(17px,1.8vw,25px);font-weight:500;letter-spacing:.03em;color:var(--board-gold)}
+.host .reveal .clue{font-family:var(--board-letter);font-size:clamp(34px,4.2vw,66px);font-weight:500;line-height:1.22;letter-spacing:.018em;color:#fff;text-shadow:2px 4px 3px #0008;text-wrap:balance}
+.host .reveal .clock{font-family:var(--board-letter);color:var(--board-gold)}
+@media(max-width:900px){.host .board .tile.category{font-size:clamp(11px,1.6vw,17px)}.host .board .tile.value{font-size:clamp(19px,2.8vw,35px)}}
+@media(max-width:700px){.host .board{gap:3px;border-width:4px}.host .board .tile{padding:2px}.host .board .tile.category{font-size:clamp(9px,2.7vw,15px);line-height:1.09;overflow-wrap:anywhere}.host .board .tile.value{font-size:clamp(15px,5vw,28px)}.host .reveal{border-width:4px}.host .reveal .kicker{font-size:clamp(12px,3.3vw,17px)}.host .reveal .clue{font-size:clamp(20px,5.5vw,34px);line-height:1.19;letter-spacing:.005em}}
